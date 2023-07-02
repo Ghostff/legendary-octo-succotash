@@ -1,4 +1,4 @@
-package com.creditcall.chipdnamobiledemo;
+package com.android.creditcall.chipdnamobiledemo;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 
 import androidx.appcompat.app.AppCompatActivity;
+import com.android.R;
 
 @SuppressLint("ParcelCreator")
 public class DigitalSignatureVerificationActivity extends AppCompatActivity

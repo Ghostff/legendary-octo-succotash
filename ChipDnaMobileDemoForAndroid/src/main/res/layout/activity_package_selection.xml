@@ -5,6 +5,31 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="20dp"
+        android:id="@+id/mainPage"
         tools:context=".montelongoworldwide.PackageSelectionActivity">
+
+
+    <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_input_bg"
+            android:padding="15dp"
+            android:textSize="16sp"
+            android:hint="@string/search"
+            android:textColorHint="@color/mute"
+            android:textColor="#9a9c9e"
+            android:drawableEnd="@drawable/ic_search"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+<!--    <include layout="@layout/pages_market"/>-->
+<!--    <include layout="@layout/pages_users"/>-->
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

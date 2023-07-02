@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 31
     defaultConfig {
-        applicationId 'com.creditcall.chipdnamobiledemo'
+        applicationId 'com.android'
         minSdkVersion 19
         targetSdkVersion 31
         versionCode 1
@@ -24,7 +24,8 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    
+    implementation 'com.squareup.picasso:picasso:2.8'
+
     implementation 'net.zetetic:android-database-sqlcipher:4.5.0@aar'
     implementation "androidx.sqlite:sqlite:2.0.1"
     implementation 'androidx.appcompat:appcompat:1.0.0'

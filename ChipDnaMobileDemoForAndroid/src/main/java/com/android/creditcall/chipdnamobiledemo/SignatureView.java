@@ -1,4 +1,4 @@
-package com.creditcall.chipdnamobiledemo;
+package com.android.creditcall.chipdnamobiledemo;
 
 import android.content.Context;
 import android.graphics.Bitmap;

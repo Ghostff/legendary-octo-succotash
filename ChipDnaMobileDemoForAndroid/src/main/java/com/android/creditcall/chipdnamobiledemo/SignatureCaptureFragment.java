@@ -1,4 +1,4 @@
-package com.creditcall.chipdnamobiledemo;
+package com.android.creditcall.chipdnamobiledemo;
 
 import android.gesture.GestureOverlayView;
 import android.graphics.Bitmap;
@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.android.R;
 import com.creditcall.chipdnamobile.ChipDnaMobileException;
 import com.creditcall.chipdnamobile.ChipDnaMobileUtils;
 

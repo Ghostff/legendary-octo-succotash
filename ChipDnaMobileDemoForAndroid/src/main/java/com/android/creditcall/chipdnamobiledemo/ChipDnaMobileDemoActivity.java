@@ -1,4 +1,4 @@
-package com.creditcall.chipdnamobiledemo;
+package com.android.creditcall.chipdnamobiledemo;
 
 import android.Manifest;
 
@@ -34,6 +34,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.R;
 import com.creditcall.chipdnamobile.Application;
 import com.creditcall.chipdnamobile.ChipDnaMobile;
 import com.creditcall.chipdnamobile.ChipDnaMobileException;

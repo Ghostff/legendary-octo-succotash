@@ -1,4 +1,4 @@
-package com.creditcall.chipdnamobiledemo;
+package com.android.creditcall.chipdnamobiledemo;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.os.Parcel;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.R;
 import com.creditcall.chipdnamobile.ChipDnaMobileException;
 import com.creditcall.chipdnamobile.ChipDnaMobileUtils;
 

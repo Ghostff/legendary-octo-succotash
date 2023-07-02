@@ -1,4 +1,4 @@
-package com.creditcall.chipdnamobiledemo;
+package com.android.creditcall.chipdnamobiledemo;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.R;
 import com.creditcall.chipdnamobile.ChipDnaMobile;
 import com.creditcall.chipdnamobile.ChipDnaMobileSerializer;
 import com.creditcall.chipdnamobile.IAvailablePinPadsListener;

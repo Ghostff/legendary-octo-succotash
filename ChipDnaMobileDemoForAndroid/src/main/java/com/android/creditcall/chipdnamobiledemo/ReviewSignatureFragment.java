@@ -1,6 +1,5 @@
-package com.creditcall.chipdnamobiledemo;
+package com.android.creditcall.chipdnamobiledemo;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -16,6 +15,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.android.R;
 
 public class ReviewSignatureFragment extends Fragment {
     private static final String ARG_SIGNATURE_BITMAP = "ARG_SIGNATURE_BITMAP";
