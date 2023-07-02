@@ -21,4 +21,6 @@
     <string name="decline">Decline</string>
     <string name="approve">Approve</string>
     <string name="reviewSignatureTag">reviewSignatureFragment</string>
+    <string name="no_result_found">No Result Found</string>
+    <string name="markets">Markets</string>
 </resources>

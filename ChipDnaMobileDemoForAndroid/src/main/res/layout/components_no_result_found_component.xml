@@ -1,0 +1,21 @@
+<!-- no_result_found_component.xml -->
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="16dp">
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_result_found"
+            android:textStyle="bold"
+            android:id="@+id/noResultFound"
+            android:paddingTop="10dp"
+            android:textColor="@color/mute"
+            android:textSize="17sp"
+            android:textAlignment="center"/>
+
+</LinearLayout>
