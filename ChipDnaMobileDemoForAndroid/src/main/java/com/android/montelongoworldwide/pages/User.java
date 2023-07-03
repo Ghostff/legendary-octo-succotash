@@ -21,26 +21,19 @@ public class User extends Page<User.Model> {
         }
     }
 
-    protected List<Model> users;
-
     public User(PackageSelectionActivity mainActivity)
     {
-        super(mainActivity, R.layout.pages_users, R.id.userModelContainer);
+        super(mainActivity, R.layout.pages_user, R.id.userModelContainer);
     }
 
     public void load()
     {
-        this.users = new ArrayList<Model>() {{
+        this.models = new ArrayList<Model>() {{
             add(new Model("Chrys Ugwu", "foo@bar.com", "832 332 1930"));
             add(new Model("Lucky Ugwu", "lucky@bar.com", "832 332 1930"));
             add(new Model("Austin Ugwu", "austine@bar.com", "832 332 1930"));
             add(new Model("Stephine Ugwu", "stephine@bar.com", "832 332 1930"));
         }};
-    }
-
-    @Override
-    public List<Model> getModels() {
-        return this.users;
     }
 
     @Override
@@ -53,12 +46,18 @@ public class User extends Page<User.Model> {
     @Override
     public View onRender(Model user)
     {
-        View cardView = this.mainActivity.getLayout(R.layout.components_user_card_component, null);
+        View cardView = this.mainActivity.getLayout(R.layout.components_user_card, null);
         TextView fullNameTextView = cardView.findViewById(R.id.fullNameTextView);
         TextView emailPhoneTextView = cardView.findViewById(R.id.emailPhoneTextView);
 
         fullNameTextView.setText(user.name);
         emailPhoneTextView.setText(String.format("%s | %s", user.email, user.phone));
+
+        // Set an OnClickListener for the cardContainer
+        cardView.setOnClickListener(v -> {
+            // Handle the cardContainer click event here
+            mainActivity.setUser(user);
+        });
 
         return cardView;
     }

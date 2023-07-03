@@ -24,4 +24,6 @@
     <string name="no_result_found">No Result Found</string>
     <string name="markets">Markets</string>
     <string name="search">Search</string>
+    <string name="checked_in_students">CHECKED IN STUDENTS</string>
+    <string name="packages">Packages</string>
 </resources>

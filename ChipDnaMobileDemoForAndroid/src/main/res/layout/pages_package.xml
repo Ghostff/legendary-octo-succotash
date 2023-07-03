@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="20dp"
-        android:id="@+id/marketLayout"
-        app:layout_constraintTop_toBottomOf="@+id/searchEditText"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchEditText"
+        android:layout_marginTop="30dp">
 
     <TextView
-            android:text="@string/markets"
+            android:text="@string/packages"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/listTitle"
             app:layout_constraintStart_toStartOf="parent"
             android:textStyle="bold"
-            android:textSize="30sp"
-            android:textColor="@color/card_default" app:layout_constraintTop_toTopOf="parent"/>
+            android:textSize="17sp"
+            android:layout_marginTop="40dp"
+            android:textColor="@color/card_default"/>
     <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,10 +33,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:id="@+id/marketModelContainer">
-
-            <include layout="@layout/components_market_card"/>
-            <include layout="@layout/components_market_card"/>
+                android:id="@+id/packageModelContainer">
+            <include layout="@layout/components_package_card"/>
         </LinearLayout>
     </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

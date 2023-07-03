@@ -5,6 +5,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.R;
 import com.android.montelongoworldwide.PackageSelectionActivity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +21,13 @@ public class Market extends Page<Market.Model> {
             this.time = time;
             this.type = type;
         }
+
+        @NotNull
+        @Override
+        public String toString() {
+            return String.format("%s, %s %s", this.city, this.state, this.time);
+        }
     }
-
-
-    protected List<Model> markets;
-
 
     public Market(PackageSelectionActivity mainActivity)
     {
@@ -34,18 +37,13 @@ public class Market extends Page<Market.Model> {
 
     public void load()
     {
-        this.markets = new ArrayList<Model>() {{
+        this.models = new ArrayList<Model>() {{
             add(new Model("Houston", "TX", "10/12/2023 09:30 PM", "real-estate"));
             add(new Model("San Antonio", "TX", "10/22/2023 08:00 PM", "real-estate"));
             add(new Model("Montgomery", "AL", "02/12/2023 05:30 PM", "cannabis"));
             add(new Model("Little Rock", "AK", "12/01/2023 07:00 PM", "real-estate"));
             add(new Model("Tallahassee", "FL", "04/22/2023 09:30 PM", "real-estate"));
         }};
-    }
-
-    @Override
-    public List<Model> getModels() {
-        return this.markets;
     }
 
     @Override
@@ -59,7 +57,7 @@ public class Market extends Page<Market.Model> {
     @Override
     public View onRender(Model market)
     {
-        View cardView = this.mainActivity.getLayout(R.layout.components_market_card_component, null);
+        View cardView = this.mainActivity.getLayout(R.layout.components_market_card, null);
 
         TextView titleTextView = cardView.findViewById(R.id.textViewTitle);
         ImageView iconView = cardView.findViewById(R.id.icon);
@@ -72,7 +70,7 @@ public class Market extends Page<Market.Model> {
         // Set an OnClickListener for the cardContainer
         cardView.setOnClickListener(v -> {
             // Handle the cardContainer click event here
-            mainActivity.selectMarket(market);
+            mainActivity.setMarket(market);
         });
 
         return PackageSelectionActivity.addVerticalMargin(cardView, 15);

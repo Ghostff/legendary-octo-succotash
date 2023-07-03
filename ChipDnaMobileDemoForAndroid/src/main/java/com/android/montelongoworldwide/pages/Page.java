@@ -14,21 +14,21 @@ public abstract class Page<T>
     protected View layout;
     protected LinearLayout cardContainer;
     protected View noResultTextView;
+    protected List<T> models;
 
     public Page(PackageSelectionActivity mainActivity, int pageLayout, int cardContainer) {
-        ViewGroup parentLayout = mainActivity.findViewById(R.id.mainPage);
+        ViewGroup parentLayout = mainActivity.findViewById(R.id.mainPageContainer);
         this.layout = mainActivity.getLayout(pageLayout, parentLayout, false);
 
         // Add layout1 to the parent layout
         parentLayout.addView(this.layout);
-        this.noResultTextView = mainActivity.getLayout(R.layout.components_no_result_found_component, null);
+        this.noResultTextView = mainActivity.getLayout(R.layout.components_no_result_found, null);
         this.cardContainer = this.layout.findViewById(cardContainer);
         this.mainActivity = mainActivity;
 
     }
 
     public abstract void load();
-    public abstract List<T> getModels();
     public abstract boolean onFilter(String searchKeyword, T model);
     public abstract View onRender(T model);
     public void setVisibility(boolean visible)
@@ -41,7 +41,7 @@ public abstract class Page<T>
         // Remove all existing card components from the cardContainer
         this.cardContainer.removeAllViews();
 
-        List<T> filteredList = this.getModels();
+        List<T> filteredList = this.models;
         if (searchKeyword != null && !searchKeyword.isEmpty()) {
             filteredList = PackageSelectionActivity.filterList(filteredList, model -> onFilter(searchKeyword, model));
         }

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/footerCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp"
+        android:layout_marginBottom="20dp"
+        app:cardElevation="0dp">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <!-- Top Layout with Background Image and Text -->
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="150dp">
+
+            <ImageView
+                    android:id="@+id/packageBackgroundImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/platinum"/>
+
+            <TextView
+                    android:id="@+id/packageNameView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Platinum"
+                    android:textSize="20sp"
+                    android:layout_margin="16sp"
+                    android:textColor="@color/card_default"
+                    android:textStyle="bold"/>
+
+            <TextView
+                    android:id="@+id/packagePriceView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$30,000"
+                    android:textSize="40sp"
+                    android:textColor="@color/card_default"
+                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="false"
+                    android:textStyle="bold"/>
+
+        </RelativeLayout>
+
+        <!-- Bottom Layout with Text -->
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+            <TextView
+                    android:id="@+id/packageTitleView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3 Days Workshop"
+                    android:textSize="16sp"
+                    android:textColor="#141614"
+                    android:textStyle="bold"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -1,7 +1,9 @@
 package com.android.montelongoworldwide;
 
+import android.annotation.SuppressLint;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +13,10 @@ import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.cardview.widget.CardView;
 import com.android.R;
 import com.android.montelongoworldwide.pages.Market;
+import com.android.montelongoworldwide.pages.Package;
 import com.android.montelongoworldwide.pages.Page;
 import com.android.montelongoworldwide.pages.User;
 
@@ -22,11 +26,16 @@ import java.util.List;
 
 public class PackageSelectionActivity extends AppCompatActivity {
     protected Market.Model selectedMarket;
-    protected Market.Model selectedUser;
+    protected User.Model selectedUser;
 
 
     protected Market market;
     protected User user;
+    protected TextView selectedMarketView;
+    protected TextView selectedUserView;
+    private CardView footerCardView;
+    private Package.Model selectedPackage;
+    private Package pkg;
 
     public View getLayout(@LayoutRes int resource, ViewGroup root) {
         return LayoutInflater.from(this).inflate(resource, root);
@@ -40,9 +49,13 @@ public class PackageSelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_package_selection);
 
-        this.market = new Market(this);
-        (this.user = new User(this)).setVisibility(false);
+        this.footerCardView = findViewById(R.id.footerCardView);
+        this.selectedMarketView = findViewById(R.id.selectedMarketView);
+        this.selectedUserView = findViewById(R.id.selectedUserView);
 
+        this.market = new Market(this);
+        this.pkg = new Package(this);
+        (this.user = new User(this)).setVisibility(false);
 
         ((EditText) findViewById(R.id.searchEditText)).addTextChangedListener(new TextWatcher() {
             @Override
@@ -60,32 +73,67 @@ public class PackageSelectionActivity extends AppCompatActivity {
             }
         });
 
-        this.market.render(null);
+        this.variableRender(null);
     }
 
     protected void variableRender(String searchKeyword)
     {
-        for (Page page : new Page[] { this.market, this.user}) {
+        for (Page page : new Page[] { this.market, this.user, this.pkg}) {
             page.setVisibility(false);
         }
 
+        renderFooter();
         // Call a method to filter the card components based on the search input
         if (this.selectedMarket == null) {
-            market.render(searchKeyword);
+            this.market.render(searchKeyword);
             this.market.setVisibility(true);
         } else if (this.selectedUser == null) {
-            user.render(searchKeyword);
+            this.user.render(searchKeyword);
             this.user.setVisibility(true);
+        } else if (this.selectedPackage == null) {
+            this.pkg.render(searchKeyword);
+            this.pkg.setVisibility(true);
+        } else {
+            Log.e("text", "Should go to payment");
         }
     }
 
-    public void selectMarket(Market.Model market)
+    protected void renderFooter()
+    {
+        if (this.selectedUser != null) {
+            this.selectedUserView.setText(this.selectedUser.name);
+            this.selectedUserView.setVisibility(View.VISIBLE);
+        } else {
+            this.selectedUserView.setVisibility(View.GONE);
+        }
+
+        if (this.selectedMarket != null) {
+            this.selectedMarketView.setText(this.selectedMarket.toString());
+            this.footerCardView.setVisibility(View.VISIBLE);;
+        } else {
+            this.footerCardView.setVisibility(View.GONE);
+        }
+    }
+
+    public void setMarket(Market.Model market)
     {
         this.selectedMarket = market;
         if (market != null) {
             this.user.load();
         }
 
+        this.variableRender(null);
+    }
+
+    public void setUser(User.Model user)
+    {
+        this.selectedUser = user;
+        this.variableRender(null);
+    }
+
+    public void setPackage(Package.Model pkg)
+    {
+        this.selectedPackage = pkg;
         this.variableRender(null);
     }
 
