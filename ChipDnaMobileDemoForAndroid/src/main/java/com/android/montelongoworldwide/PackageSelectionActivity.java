@@ -15,10 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.cardview.widget.CardView;
 import com.android.R;
-import com.android.montelongoworldwide.pages.Market;
+import com.android.montelongoworldwide.pages.*;
 import com.android.montelongoworldwide.pages.Package;
-import com.android.montelongoworldwide.pages.Page;
-import com.android.montelongoworldwide.pages.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +31,12 @@ public class PackageSelectionActivity extends AppCompatActivity {
     protected User user;
     protected TextView selectedMarketView;
     protected TextView selectedUserView;
-    private CardView footerCardView;
-    private Package.Model selectedPackage;
-    private Package pkg;
+    protected CardView footerCardView;
+    protected Package.Model selectedPackage;
+    protected double selectedAmount = 0.0;
+    protected Package pkg;
+    protected EditText searchEditText;
+    protected PaymentAmount paymentAmount;
 
     public View getLayout(@LayoutRes int resource, ViewGroup root) {
         return LayoutInflater.from(this).inflate(resource, root);
@@ -52,12 +53,14 @@ public class PackageSelectionActivity extends AppCompatActivity {
         this.footerCardView = findViewById(R.id.footerCardView);
         this.selectedMarketView = findViewById(R.id.selectedMarketView);
         this.selectedUserView = findViewById(R.id.selectedUserView);
+        this.searchEditText = findViewById(R.id.searchEditText);
 
         this.market = new Market(this);
         this.pkg = new Package(this);
         (this.user = new User(this)).setVisibility(false);
+        (this.paymentAmount = new PaymentAmount(this)).setVisibility(false);
 
-        ((EditText) findViewById(R.id.searchEditText)).addTextChangedListener(new TextWatcher() {
+        this.searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -78,11 +81,13 @@ public class PackageSelectionActivity extends AppCompatActivity {
 
     protected void variableRender(String searchKeyword)
     {
-        for (Page page : new Page[] { this.market, this.user, this.pkg}) {
-            page.setVisibility(false);
+        for (Toggleable view : new Toggleable[] { this.market, this.user, this.pkg, this.paymentAmount}) {
+            view.setVisibility(false);
         }
 
+        this.searchEditText.setVisibility(View.VISIBLE);
         renderFooter();
+
         // Call a method to filter the card components based on the search input
         if (this.selectedMarket == null) {
             this.market.render(searchKeyword);
@@ -93,9 +98,40 @@ public class PackageSelectionActivity extends AppCompatActivity {
         } else if (this.selectedPackage == null) {
             this.pkg.render(searchKeyword);
             this.pkg.setVisibility(true);
+        } else if (this.selectedAmount == 0.0) {
+            this.searchEditText.setVisibility(View.GONE);
+            this.footerCardView.setVisibility(View.GONE);
+            this.paymentAmount.setVisibility(true, this.selectedMarket, this.selectedUser, this.selectedPackage);
         } else {
-            Log.e("text", "Should go to payment");
+
+            Log.e("text", "Should go to card swipe");
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (this.selectedAmount > 0.0) {
+            this.paymentAmount.clearAmount();
+            this.setAmount(0.0);
+            return;
+        }
+
+        if (this.selectedPackage != null) {
+            this.setPackage(null);
+            return;
+        }
+
+        if (this.selectedUser != null) {
+            this.setUser(null);
+            return;
+        }
+
+        if (this.selectedMarket != null) {
+            this.setMarket(null);
+            return;
+        }
+
+        super.onBackPressed();
     }
 
     protected void renderFooter()
@@ -137,12 +173,16 @@ public class PackageSelectionActivity extends AppCompatActivity {
         this.variableRender(null);
     }
 
+    public void setAmount(double amount)
+    {
+        this.selectedAmount = amount;
+        this.variableRender(null);
+    }
 
     public static View addVerticalMargin(View cardView, int margin)
     {
         return PackageSelectionActivity.addMargins(cardView, 0, margin, 0, margin);
     }
-
 
     public static View addMargins(View cardView, int left, int top, int right, int bottom)
     {
@@ -156,7 +196,7 @@ public class PackageSelectionActivity extends AppCompatActivity {
         return cardView;
     }
 
-    public static  <T> List<T> filterList(List<T> inputList, Predicate<? super T> filter) {
+    public static <T> List<T> filterList(List<T> inputList, Predicate<? super T> filter) {
         List<T> resultList = new ArrayList<>();
         for (T item : inputList) {
             if (filter.test(item)) {

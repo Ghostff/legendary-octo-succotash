@@ -7,19 +7,31 @@
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/plan_bg_gradient"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchEditText"
-        android:layout_marginTop="30dp">
+        app:layout_constraintTop_toBottomOf="@+id/searchEditText">
 
     <TextView
-            android:text="@string/packages"
+            android:text="Choose your package!"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
             android:id="@+id/listTitle"
             app:layout_constraintStart_toStartOf="parent"
             android:textStyle="bold"
+            android:textSize="30sp"
+            android:textColor="@color/card_default"/>
+
+    <TextView
+            android:text="You will be required to sign a purchas agreement after purchase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/planDescription"
+            android:layout_marginHorizontal="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textStyle="bold"
             android:textSize="17sp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="5dp"
             android:textColor="@color/card_default"/>
     <ScrollView
             android:layout_width="match_parent"
@@ -27,14 +39,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/scrollView2"
+            android:padding="20dp"
             app:layout_constraintTop_toBottomOf="@+id/listTitle"
             android:layout_marginTop="5dp">
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:paddingBottom="100dp"
                 android:id="@+id/packageModelContainer">
             <include layout="@layout/components_package_card"/>
+            <include layout="@layout/components_package_card"/>
         </LinearLayout>
+
+
     </ScrollView>
 </LinearLayout>

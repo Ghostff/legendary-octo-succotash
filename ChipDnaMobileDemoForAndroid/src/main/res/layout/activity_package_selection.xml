@@ -11,12 +11,12 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/mainPageContainer"
-            android:padding="20dp"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/include">
         <EditText
                 android:id="@+id/searchEditText"
                 android:layout_width="match_parent"
@@ -26,15 +26,21 @@
                 android:textSize="16sp"
                 android:hint="@string/search"
                 android:textColorHint="@color/mute"
-                android:textColor="#9a9c9e"
+                android:textColor="@color/mute"
+                android:layout_margin="20dp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
         />
 
-<!--            <include layout="@layout/pages_market"/>-->
-<!--            <include layout="@layout/pages_user"/>-->
-<!--            <include layout="@layout/pages_package"/>-->
+        <!--            <include layout="@layout/pages_market"/>-->
+        <!--            <include layout="@layout/pages_user"/>-->
+<!--                    <include layout="@layout/pages_package"/>-->
+<!--                    <include layout="@layout/pages_payment_amount"/>-->
+
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,8 +1,10 @@
 package com.android.montelongoworldwide.pages;
 
+import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.cardview.widget.CardView;
 import com.android.R;
 import com.android.montelongoworldwide.PackageSelectionActivity;
 
@@ -44,13 +46,14 @@ public class Package extends Page<Package.Model>
     }
 
     @Override
-    public View onRender(Model pkg) {
+    public View onRender(Model pkg, int index) {
         View cardView = this.mainActivity.getLayout(R.layout.components_package_card, null);
 
         ImageView bgImageView = cardView.findViewById(R.id.packageBackgroundImage);
         TextView nameView = cardView.findViewById(R.id.packageNameView);
         TextView priceView = cardView.findViewById(R.id.packagePriceView);
         TextView titleView = cardView.findViewById(R.id.packageTitleView);
+        CardView planInterCardView = cardView.findViewById(R.id.planInterCardView);
 
         nameView.setText(pkg.name);
         priceView.setText(pkg.price);
@@ -69,6 +72,15 @@ public class Package extends Page<Package.Model>
             // Handle the cardContainer click event here
             mainActivity.setPackage(pkg);
         });
+
+        if (index > 0) {
+            int textColor = Color.parseColor("#f3f3f3");
+            planInterCardView.setCardBackgroundColor(Color.parseColor("#1a1a1a"));
+            nameView.setTextColor(textColor);
+            priceView.setTextColor(textColor);
+            titleView.setTextColor(textColor);
+        }
+
 
         return PackageSelectionActivity.addVerticalMargin(cardView, 15);
     }

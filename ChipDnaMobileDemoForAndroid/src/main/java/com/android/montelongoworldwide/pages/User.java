@@ -44,7 +44,7 @@ public class User extends Page<User.Model> {
     }
 
     @Override
-    public View onRender(Model user)
+    public View onRender(Model user, int index)
     {
         View cardView = this.mainActivity.getLayout(R.layout.components_user_card, null);
         TextView fullNameTextView = cardView.findViewById(R.id.fullNameTextView);

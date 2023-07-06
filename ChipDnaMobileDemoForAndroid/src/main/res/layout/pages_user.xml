@@ -6,6 +6,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="20dp"
+        android:padding="20dp"
         android:id="@+id/marketLayout"
         app:layout_constraintTop_toBottomOf="@+id/searchEditText"
         app:layout_constraintEnd_toEndOf="parent"

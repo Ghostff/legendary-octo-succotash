@@ -1,40 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".montelongoworldwide.AmountAdjustmentActivity">
-
+        android:layout_height="match_parent">
     <TextView
             android:text="Package: 3 Days workshop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView2"
+            android:id="@+id/selectedPackageView"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="10dp" android:textColor="#C5C5C5" android:textStyle="bold"/>
+            android:layout_marginTop="10dp"
+            android:textColor="#C5C5C5"
+            android:textStyle="bold" android:textAlignment="center"/>
 
     <TextView
             android:text="$0.00"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/amount"
+            android:layout_height="wrap_content"
+            android:id="@+id/amount"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="24dp" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" android:textSize="70sp" android:textStyle="bold"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display3" android:textAlignment="center"
-            android:textColor="#16023A" android:fontFamily="sans-serif-thin" android:typeface="sans"
-            android:layout_marginStart="10dp" android:layout_marginEnd="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/button"/>
+            android:layout_marginTop="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textSize="70sp"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+            android:textAlignment="center"
+            android:textColor="@color/card_default"
+            android:fontFamily="sans-serif-thin"
+            android:typeface="sans"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/continueButton"/>
     <Button
             android:text="Continue"
             android:layout_width="0dp"
-            android:elevation="2dp"
-            android:layout_height="wrap_content" android:id="@+id/button"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="10dp" android:layout_marginEnd="10dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/continueButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toTopOf="@+id/tableLayout4"
             android:textSize="20sp"
             android:background="@drawable/primary_button"
@@ -217,5 +226,4 @@
                     android:id="@+id/keypad_backspace"/>
         </TableRow>
     </TableLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

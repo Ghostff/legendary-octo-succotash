@@ -55,7 +55,7 @@ public class Market extends Page<Market.Model> {
     }
 
     @Override
-    public View onRender(Model market)
+    public View onRender(Model market, int index)
     {
         View cardView = this.mainActivity.getLayout(R.layout.components_market_card, null);
 

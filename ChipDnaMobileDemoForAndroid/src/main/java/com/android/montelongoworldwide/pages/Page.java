@@ -8,12 +8,12 @@ import com.android.montelongoworldwide.PackageSelectionActivity;
 
 import java.util.List;
 
-public abstract class Page<T>
+public abstract class Page<T> implements Toggleable
 {
-    protected PackageSelectionActivity mainActivity;
-    protected View layout;
-    protected LinearLayout cardContainer;
-    protected View noResultTextView;
+    protected final PackageSelectionActivity mainActivity;
+    protected final View layout;
+    protected final LinearLayout cardContainer;
+    protected final View noResultTextView;
     protected List<T> models;
 
     public Page(PackageSelectionActivity mainActivity, int pageLayout, int cardContainer) {
@@ -30,7 +30,7 @@ public abstract class Page<T>
 
     public abstract void load();
     public abstract boolean onFilter(String searchKeyword, T model);
-    public abstract View onRender(T model);
+    public abstract View onRender(T model, int index);
     public void setVisibility(boolean visible)
     {
         this.layout.setVisibility(visible ? View.VISIBLE : View.GONE);
@@ -51,9 +51,10 @@ public abstract class Page<T>
             return;
         }
 
+        int index = 0;
         // Create clones of the card component and set dynamic data
         for (T model : filteredList) {
-            this.cardContainer.addView(this.onRender(model));
+            this.cardContainer.addView(this.onRender(model, index++));
         }
     }
 }
