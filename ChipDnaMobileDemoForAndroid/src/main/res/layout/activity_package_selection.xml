@@ -34,10 +34,24 @@
                 app:layout_constraintTop_toTopOf="parent"
         />
 
-        <!--            <include layout="@layout/pages_market"/>-->
+
+
+
+
+
+
+
+<!--                    <include layout="@layout/pages_market"/>-->
         <!--            <include layout="@layout/pages_user"/>-->
 <!--                    <include layout="@layout/pages_package"/>-->
 <!--                    <include layout="@layout/pages_payment_amount"/>-->
+<!--                    <include layout="@layout/pages_payment_collection"/>-->
+<!--                    <include layout="@layout/pages_payment_completed"/>-->
+
+
+
+
+
 
 
 

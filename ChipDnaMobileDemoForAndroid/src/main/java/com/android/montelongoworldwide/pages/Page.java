@@ -25,7 +25,6 @@ public abstract class Page<T> implements Toggleable
         this.noResultTextView = mainActivity.getLayout(R.layout.components_no_result_found, null);
         this.cardContainer = this.layout.findViewById(cardContainer);
         this.mainActivity = mainActivity;
-
     }
 
     public abstract void load();

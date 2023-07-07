@@ -44,7 +44,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="10dp"
                         android:textStyle="bold"
                         android:textColor="@color/black"
                         android:text="Platinum"
@@ -55,7 +55,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="10dp"
                         android:text="$30,000"
                         android:textColor="@color/black"
                         android:textSize="20sp" />
@@ -71,7 +71,9 @@
                     android:layout_marginVertical="8dp"
                     android:text="3 Days workshop"
                     android:textColor="@color/black"
-                    android:textSize="18sp" android:textAlignment="center"/>
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:textAlignment="center"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.cardview.widget.CardView>

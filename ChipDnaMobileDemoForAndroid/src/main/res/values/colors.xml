@@ -10,4 +10,6 @@
     <color name="black">#000000</color>
     <color name="mute">#a2a2a2</color>
     <color name="light_mute">#f3f3f3</color>
+    <color name="secondary">#fed97b</color>
+    <color name="secondary_muted">#EBFED97B</color>
 </resources>

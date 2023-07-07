@@ -29,10 +29,16 @@ public class User extends Page<User.Model> {
     public void load()
     {
         this.models = new ArrayList<Model>() {{
-            add(new Model("Chrys Ugwu", "foo@bar.com", "832 332 1930"));
-            add(new Model("Lucky Ugwu", "lucky@bar.com", "832 332 1930"));
-            add(new Model("Austin Ugwu", "austine@bar.com", "832 332 1930"));
-            add(new Model("Stephine Ugwu", "stephine@bar.com", "832 332 1930"));
+            add(new Model("Ethan Parker", "ethan.parker@example.com", "+1 (555) 123-4567"));
+            add(new Model("Olivia Adams", "olivia.adams@example.com", "+1 (555) 234-5678"));
+            add(new Model("Benjamin Smith", "benjamin.smith@example.com", "+1 (555) 345-6789"));
+            add(new Model("Ava Johnson", "ava.johnson@example.com", "+1 (555) 456-7890"));
+            add(new Model("Noah Thompson", "noah.thompson@example.com", "+1 (555) 567-8901"));
+            add(new Model("Emma Wilson", "emma.wilson@example.com", "+1 (555) 678-9012"));
+            add(new Model("Liam Davis", "liam.davis@example.com", "+1 (555) 789-0123"));
+            add(new Model("Isabella Martinez", "isabella.martinez@example.com", "+1 (555) 890-1234"));
+            add(new Model("Lucas Anderson", "lucas.anderson@example.com", "+1 (555) 901-2345"));
+            add(new Model("Sophia Taylor", "sophia.taylor@example.com", "+1 (555) 012-3456"));
         }};
     }
 

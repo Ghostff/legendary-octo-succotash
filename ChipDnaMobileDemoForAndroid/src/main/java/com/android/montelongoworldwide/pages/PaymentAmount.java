@@ -53,13 +53,13 @@ public class PaymentAmount implements Toggleable {
     @SuppressLint("DefaultLocale")
     protected void updateAmount()
     {
-        amount.setText(String.format("$%,.2f", this.getAmount() / 100));
+        amount.setText(String.format("$%,.2f", this.getAmount() / 100.0));
     }
 
-    protected double getAmount()
+    protected int getAmount()
     {
         if (this.numbers.size() == 0) {
-            return 0.0;
+            return 0;
         }
 
         return Integer.parseInt(String.join("", this.numbers));
@@ -69,6 +69,9 @@ public class PaymentAmount implements Toggleable {
     {
         this.layout.setVisibility(visible ? View.VISIBLE : View.GONE);
         if (market != null && user != null && pkg != null) {
+            this.numbers.clear();
+            this.numbers.add(String.valueOf(pkg.price));
+            this.updateAmount();
             this.selectedPackageView.setText(market + "\n" + user.name + "\n" + pkg.title);
         }
     }
