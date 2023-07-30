@@ -47,9 +47,18 @@
                 android:layout_marginBottom="20dp"
                 android:textAlignment="center"/>
 
+        <!-- Second Button -->
+        <Button
+                android:id="@+id/addAnotherPayment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"
+                android:background="@color/light_mute"
+                android:text="Add Another Payment"/>
+
         <!-- First Button -->
         <Button
-                android:id="@+id/button1"
+                android:id="@+id/singPa"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAllCaps="false"
@@ -57,14 +66,5 @@
                 android:text="Sign Purchase Agreement"
                 android:background="@color/secondary"
         />
-
-        <!-- Second Button -->
-        <Button
-                android:id="@+id/button2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAllCaps="false"
-                android:background="@color/light_mute"
-                android:text="Add Another Payment"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -1,6 +1,8 @@
 package com.android.montelongoworldwide;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -8,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.LayoutRes;
@@ -18,31 +19,33 @@ import androidx.cardview.widget.CardView;
 import com.android.R;
 import com.android.montelongoworldwide.pages.*;
 import com.android.montelongoworldwide.pages.Package;
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 
 
 public class PackageSelectionActivity extends AppCompatActivity {
     protected Market.Model selectedMarket;
     protected User.Model selectedUser;
-
-
     protected Market market;
     protected User user;
     protected TextView selectedMarketView;
     protected TextView selectedUserView;
     protected CardView footerCardView;
     protected Package.Model selectedPackage;
-    protected int selectedAmount = 0;
-    protected String lastTransaction = null;
+    protected Transaction currentTransaction;
+    protected ArrayList<Transaction> allTransactions = new ArrayList<>();
+    protected Dictionary<String, String> lastTransaction = new Hashtable<>();
     protected boolean signedPA = false;
+    protected boolean showPurchaseAgreementPage = false;
     protected Package pkg;
     protected EditText searchEditText;
     protected PaymentAmount paymentAmount;
     protected PaymentCollect paymentCollect;
     protected PaymentCompleted paymentCompleted;
+    protected PurchaseAgreement purchaseAgreement;
 
     public View getLayout(@LayoutRes int resource, ViewGroup root) {
         return LayoutInflater.from(this).inflate(resource, root);
@@ -67,6 +70,7 @@ public class PackageSelectionActivity extends AppCompatActivity {
         (this.paymentAmount = new PaymentAmount(this)).setVisibility(false);
         (this.paymentCollect = new PaymentCollect(this)).setVisibility(false);
         (this.paymentCompleted = new PaymentCompleted(this)).setVisibility(false);
+        (this.purchaseAgreement = new PurchaseAgreement(this)).setVisibility(false);
 
         this.searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -89,13 +93,14 @@ public class PackageSelectionActivity extends AppCompatActivity {
 
     protected void variableRender(String searchKeyword)
     {
-        for (Toggleable view : new Toggleable[] {
+        for (AbstractToggleable view : new AbstractToggleable[] {
                 this.market,
                 this.user,
                 this.pkg,
                 this.paymentAmount,
                 this.paymentCollect,
-                this.paymentCompleted
+                this.paymentCompleted,
+                this.purchaseAgreement
         }) {
             view.setVisibility(false);
         }
@@ -117,13 +122,20 @@ public class PackageSelectionActivity extends AppCompatActivity {
             this.searchEditText.setVisibility(View.GONE);
             this.footerCardView.setVisibility(View.GONE);
 
-            if (this.selectedAmount == 0) {
-                this.paymentAmount.setVisibility(true, this.selectedMarket, this.selectedUser, this.selectedPackage);
-            } else if (this.lastTransaction == null) {
-                this.paymentCollect.setVisibility(true, this.selectedPackage);
+            if (this.showPurchaseAgreementPage) {
+                this.purchaseAgreement.setVisibility(true);
+                return;
+            }
+
+            if (this.currentTransaction == null) {
+                String packageTitle = this.selectedPackage.title;
+                int amount = this.getAmountDifference();
+                this.paymentAmount.setVisibility(true, this.selectedMarket, this.selectedUser, packageTitle, amount);
+            } else if (this.currentTransaction.id == null) {
+                this.paymentCollect.setVisibility(true, this.currentTransaction);
             } else {
+                this.allTransactions.add(this.currentTransaction);
                 this.paymentCompleted.setVisibility(true);
-                Log.e("text", "Should go to card swipe");
             }
         }
     }
@@ -135,10 +147,9 @@ public class PackageSelectionActivity extends AppCompatActivity {
             return;
         }
 
-
-        if (this.selectedAmount > 0) {
+        if (this.currentTransaction != null) {
             this.paymentAmount.clearAmount();
-            this.setAmount(0);
+            this.setTransaction(null);
             return;
         }
 
@@ -199,15 +210,79 @@ public class PackageSelectionActivity extends AppCompatActivity {
         this.variableRender(null);
     }
 
-    public void setAmount(int amount)
+    public Package.Model getSelectedPackage()
     {
-        this.selectedAmount = amount;
+        return this.selectedPackage;
+    }
+
+    public void setTransaction(Transaction transaction)
+    {
+        this.currentTransaction = transaction;
         this.variableRender(null);
     }
 
-    public void setLastTransactionId(String transactionId) {
-        this.lastTransaction = transactionId;
+    /**
+     * Gets amount difference between package and user specified.
+     * e.g if package is 10k and user paid 8k, this method will return 2k
+     *
+     * @return int
+     */
+    public int getAmountDifference()
+    {
+        if (this.selectedPackage == null) {
+            return 1; // fail-safe. always have a diff
+        }
+
+        if (this.allTransactions.isEmpty()) {
+            return selectedPackage.price;  // fail-safe. always have a diff
+        }
+
+        int total = 0;
+        for (Transaction transaction : this.allTransactions) {
+            total += transaction.amount;
+        }
+
+        return this.selectedPackage.price - total;
+    }
+
+    public void setLastTransactionId(String transactionId)
+    {
+        this.currentTransaction.id = transactionId;
         this.variableRender(null);
+    }
+
+    public void addAnotherPayment()
+    {
+        this.currentTransaction = null;
+        this.variableRender(null);
+    }
+
+
+    protected void setPAVisibility(boolean isVisible)
+    {
+        this.showPurchaseAgreementPage = isVisible;
+        this.variableRender(null);
+    }
+
+    public void signPurchaseAgreements()
+    {
+        if (this.getAmountDifference() >= 1) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Confirm Purchase Agreement Signing")
+                    .setMessage("You have not paid the full amount for this package. Are you sure you want to proceed with signing the purchase agreement?")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> setPAVisibility(true))
+                    .setNegativeButton(android.R.string.no, (dialog, whichButton) -> setPAVisibility(false))
+                    .show();
+        } else {
+            this.setPAVisibility(true);
+        }
+    }
+
+    @SuppressLint("DefaultLocale")
+    public static String formatAmount(int amount)
+    {
+        return String.format("$%,.2f", amount / 100.0);
     }
 
     public static View addVerticalMargin(View cardView, int margin)
@@ -236,6 +311,7 @@ public class PackageSelectionActivity extends AppCompatActivity {
         }
         return resultList;
     }
+
 
     public interface Predicate<T> {
         boolean test(T t);

@@ -221,6 +221,7 @@ public class ChipDnaMobileDemoActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which activity is returning a result. We are only bothered about the SelectPinPadActivity.
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SelectPinPadActivity.ACTIVITY_REQUEST_CODE) {
             switch (resultCode) {
                 // Result ok, begin the process of connecting to the PINpad so enable the connectToPinPadButton.
@@ -263,14 +264,14 @@ public class ChipDnaMobileDemoActivity extends AppCompatActivity implements
                 log("continueSignatureVerification =>", parameters);
             }
 
-            executor.execute(() ->{
+            executor.execute(() -> {
                 Parameters paramResponse;
                 if (!terminateTransaction) {
                     paramResponse = ChipDnaMobile.getInstance().continueSignatureCapture(parameters);
                 } else {
-                    paramResponse =  ChipDnaMobile.getInstance().terminateTransaction(null);
+                    paramResponse = ChipDnaMobile.getInstance().terminateTransaction(null);
                 }
-                handler.post(() ->{
+                handler.post(() -> {
                     if (terminateTransaction) {
                         log("ChipDnaMobile.terminateTransaction (response)", paramResponse);
                     } else if ((paramResponse.getValue(ParameterKeys.Errors) != null &&
@@ -378,6 +379,7 @@ public class ChipDnaMobileDemoActivity extends AppCompatActivity implements
                                         // send a request containing the entered password so it can be handled by ChipDnaMobile.
                                         Parameters requestParameters = new Parameters();
                                         requestParameters.add(ParameterKeys.Password, params[0]);
+                                        requestParameters.add(ParameterKeys.ChangePassword, "1234");
                                         Parameters response = ChipDnaMobile.initialize(getApplicationContext(), requestParameters);
                                         return response;
                                     }

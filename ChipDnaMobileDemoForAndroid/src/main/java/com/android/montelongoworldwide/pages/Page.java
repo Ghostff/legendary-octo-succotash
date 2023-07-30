@@ -8,10 +8,9 @@ import com.android.montelongoworldwide.PackageSelectionActivity;
 
 import java.util.List;
 
-public abstract class Page<T> implements Toggleable
+public abstract class Page<T> extends AbstractToggleable
 {
     protected final PackageSelectionActivity mainActivity;
-    protected final View layout;
     protected final LinearLayout cardContainer;
     protected final View noResultTextView;
     protected List<T> models;
@@ -30,10 +29,6 @@ public abstract class Page<T> implements Toggleable
     public abstract void load();
     public abstract boolean onFilter(String searchKeyword, T model);
     public abstract View onRender(T model, int index);
-    public void setVisibility(boolean visible)
-    {
-        this.layout.setVisibility(visible ? View.VISIBLE : View.GONE);
-    }
 
     public void render(String searchKeyword)
     {

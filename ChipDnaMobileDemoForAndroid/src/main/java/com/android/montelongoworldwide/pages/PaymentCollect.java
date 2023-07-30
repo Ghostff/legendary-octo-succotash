@@ -11,12 +11,11 @@ import com.android.montelongoworldwide.PackageSelectionActivity;
 import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
 
-public class PaymentCollect implements Toggleable {
+public class PaymentCollect extends AbstractToggleable {
     protected final TextView paymentAmountView;
     protected final ConstraintLayout paymentSwipeContainer;
     protected final ConstraintLayout paymentKeyInContainer;
     protected final TabLayout paymentTabNavLayout;
-    protected final View layout;
     protected final Button submitPaymentButton;
 
     public PaymentCollect(PackageSelectionActivity mainActivity) {
@@ -76,13 +75,8 @@ public class PaymentCollect implements Toggleable {
         });
     }
 
-    @Override
-    public void setVisibility(boolean visible) {
-        this.layout.setVisibility(visible ? View.VISIBLE : View.GONE);
-    }
-
-    public void setVisibility(boolean visible, Package.Model selectedPackage) {
-        this.paymentAmountView.setText(selectedPackage.getHumanPrice());
+    public void setVisibility(boolean visible, Transaction currentTransaction) {
+        this.paymentAmountView.setText(PackageSelectionActivity.formatAmount(currentTransaction.amount));
         this.setVisibility(visible);
     }
 }

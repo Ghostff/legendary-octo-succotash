@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/amount"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="100dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:textSize="70sp"
@@ -37,6 +37,21 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toTopOf="@+id/continueButton"/>
+
+
+    <TextView
+            android:text="$0.0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/remainingAmount"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="#C5C5C5"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/amount"/>
+
     <Button
             android:text="Continue"
             android:layout_width="0dp"

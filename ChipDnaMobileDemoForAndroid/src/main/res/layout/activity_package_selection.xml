@@ -36,13 +36,8 @@
 
 
 
-
-
-
-
-
 <!--                    <include layout="@layout/pages_market"/>-->
-        <!--            <include layout="@layout/pages_user"/>-->
+<!--                    <include layout="@layout/pages_user"/>-->
 <!--                    <include layout="@layout/pages_package"/>-->
 <!--                    <include layout="@layout/pages_payment_amount"/>-->
 <!--                    <include layout="@layout/pages_payment_collection"/>-->

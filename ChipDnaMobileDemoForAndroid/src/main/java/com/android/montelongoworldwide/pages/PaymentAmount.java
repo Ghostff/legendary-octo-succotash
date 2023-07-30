@@ -1,6 +1,8 @@
 package com.android.montelongoworldwide.pages;
 
 import android.annotation.SuppressLint;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -11,14 +13,14 @@ import com.android.montelongoworldwide.PackageSelectionActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaymentAmount implements Toggleable {
+public class PaymentAmount extends AbstractToggleable {
 
     protected final TextView selectedPackageView;
     private final Button continueButton;
+    private final TextView remainingAmount;
     protected TextView amount;
+    protected int maxAmount;
     protected List<String> numbers = new ArrayList<>();
-
-    protected View layout;
 
 
     public PaymentAmount(PackageSelectionActivity mainActivity)
@@ -43,17 +45,18 @@ public class PaymentAmount implements Toggleable {
 
         this.selectedPackageView = this.layout.findViewById(R.id.selectedPackageView);
         this.continueButton = this.layout.findViewById(R.id.continueButton);
+        this.remainingAmount = this.layout.findViewById(R.id.remainingAmount);
 
         this.continueButton.setOnClickListener(v -> {
             // Handle the cardContainer click event here
-            mainActivity.setAmount(getAmount());
+            mainActivity.setTransaction(new Transaction(getAmount()));
         });
     }
 
     @SuppressLint("DefaultLocale")
     protected void updateAmount()
     {
-        amount.setText(String.format("$%,.2f", this.getAmount() / 100.0));
+        amount.setText(PackageSelectionActivity.formatAmount(this.getAmount()));
     }
 
     protected int getAmount()
@@ -65,14 +68,15 @@ public class PaymentAmount implements Toggleable {
         return Integer.parseInt(String.join("", this.numbers));
     }
 
-    public void setVisibility(boolean visible, Market.Model market, User.Model user, Package.Model pkg)
+    public void setVisibility(boolean visible, Market.Model market, User.Model user, String packageTitle, int amount)
     {
         this.layout.setVisibility(visible ? View.VISIBLE : View.GONE);
-        if (market != null && user != null && pkg != null) {
+        if (market != null && user != null && packageTitle != null) {
             this.numbers.clear();
-            this.numbers.add(String.valueOf(pkg.price));
+            this.numbers.add(String.valueOf(this.maxAmount = amount));
+            this.remainingAmount.setText(PackageSelectionActivity.formatAmount(amount));
             this.updateAmount();
-            this.selectedPackageView.setText(market + "\n" + user.name + "\n" + pkg.title);
+            this.selectedPackageView.setText(market + "\n" + user.name + "\n" + packageTitle);
         }
     }
 
@@ -84,7 +88,7 @@ public class PaymentAmount implements Toggleable {
 
     public void setVisibility(boolean visible)
     {
-        this.setVisibility(visible, null, null, null);
+        this.setVisibility(visible, null, null, null, 0);
     }
 
     public void keypadListener(Button button)
@@ -92,14 +96,35 @@ public class PaymentAmount implements Toggleable {
         button.setOnClickListener(v -> {
             String number = ((Button) v).getText().toString();
             if (number.equals("⌫")) {
-                int lastIndex = this.numbers.size() - 1;
-                if (lastIndex >= 0) {
-                    this.numbers.remove(lastIndex);
-                }
+               this.removeLastNumber();
             } else {
                 this.numbers.add(number);
             }
             this.updateAmount();
+
+            // When the entered amount exceeds the package/remaining amount, we want to remove the last entered number
+            // but before that, we want to show that we got the input, that way it doesn't seem like a bug.
+            new CountDownTimer(200, 100) {
+                @Override
+                public void onTick(long millisUntilFinished) {}
+
+                @Override
+                public void onFinish() {
+                    if (getAmount() > maxAmount) {
+                        removeLastNumber();
+                        updateAmount();
+                    }
+                }
+            }.start();
+
         });
+    }
+
+    protected void removeLastNumber()
+    {
+        int lastIndex = this.numbers.size() - 1;
+        if (lastIndex >= 0) {
+            this.numbers.remove(lastIndex);
+        }
     }
 }
