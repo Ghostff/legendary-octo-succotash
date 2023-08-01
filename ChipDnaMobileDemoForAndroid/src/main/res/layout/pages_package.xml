@@ -3,13 +3,10 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:background="@drawable/plan_bg_gradient"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchEditText">
+        android:layout_marginTop="20dp"
+        android:background="@drawable/plan_bg_gradient">
 
     <TextView
             android:text="Choose your package!"
@@ -46,10 +43,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="200dp"
+                android:paddingBottom="220dp"
                 android:id="@+id/packageModelContainer">
             <include layout="@layout/components_package_card"/>
             <include layout="@layout/components_package_card"/>
+<!--            <include layout="@layout/components_package_card"/>-->
         </LinearLayout>
 
 

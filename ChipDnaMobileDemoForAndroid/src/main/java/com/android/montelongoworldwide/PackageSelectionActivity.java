@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,7 +20,6 @@ import com.android.montelongoworldwide.pages.*;
 import com.android.montelongoworldwide.pages.Package;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.*;
 
@@ -47,11 +45,9 @@ public class PackageSelectionActivity extends AppCompatActivity {
     protected PaymentCollect paymentCollect;
     protected PaymentCompleted paymentCompleted;
     protected PurchaseAgreement purchaseAgreement;
-    private LinearLayoutCompat loadingLayout;
     private Event event;
     private Datetime datetime;
     protected Hashtable<Integer, AbstractToggleable> pages = new Hashtable<>();
-    protected JSONArray packages = new JSONArray();
     protected int pageIndex = 0;
 
     public PackageSelectionActivity()
@@ -60,7 +56,6 @@ public class PackageSelectionActivity extends AppCompatActivity {
             @Override
             public void onSuccess(JSONArray markets) {
                 market.setModels(markets).setVisibility(true);
-                loadingLayout.setVisibility(View.GONE);
             }
 
             @Override
@@ -101,7 +96,6 @@ public class PackageSelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_package_selection);
 
-        this.loadingLayout = findViewById(R.id.loadingLayout);
         this.footerCardView = findViewById(R.id.footerCardView);
         this.selectedMarketView = findViewById(R.id.selectedMarketView);
         this.selectedUserView = findViewById(R.id.selectedUserView);
@@ -119,7 +113,7 @@ public class PackageSelectionActivity extends AppCompatActivity {
 
         this.footerCardView.setVisibility(View.GONE);
         this.searchEditText.addTextChangedListener(new TextWatcher() {
-            protected String lastKeyword = "";
+            private String lastKeyword = "";
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
@@ -240,7 +234,7 @@ public class PackageSelectionActivity extends AppCompatActivity {
     public void addAnotherPayment()
     {
         this.pageIndex = 4;
-        this.setPackage(this.selectedPackage);
+        this.moveForward();
     }
 
     public void signPurchaseAgreement()
@@ -289,6 +283,12 @@ public class PackageSelectionActivity extends AppCompatActivity {
         } else {
             this.signPurchaseAgreement();
         }
+    }
+
+    public void purchaseAgreementSigned()
+    {
+        this.pageIndex = 2;
+        this.moveForward();
     }
 
     public static View addVerticalMargin(View cardView, int margin)

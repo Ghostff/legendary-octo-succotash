@@ -1,24 +1,29 @@
 package com.android.montelongoworldwide.pages;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import com.android.R;
+import com.android.montelongoworldwide.JsonRequest;
 import com.android.montelongoworldwide.PackageSelectionActivity;
 import com.android.montelongoworldwide.Utils;
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 public class PurchaseAgreement extends AbstractToggleable {
 
     private final WebView webView;
+    private final PackageSelectionActivity mainActivity;
 
     @SuppressLint("SetJavaScriptEnabled")
     public PurchaseAgreement(PackageSelectionActivity mainActivity) {
-        ViewGroup parentLayout = mainActivity.findViewById(R.id.mainPageContainer);
+        ViewGroup parentLayout = (this.mainActivity = mainActivity).findViewById(R.id.mainPageContainer);
         this.layout = mainActivity.getLayout(R.layout.pages_purchase_agreement, parentLayout, false);
         // Add layout1 to the parent layout
         parentLayout.addView(this.layout);
@@ -35,11 +40,38 @@ public class PurchaseAgreement extends AbstractToggleable {
 
     public void sign(ArrayList<Transaction> allTransactions, String marketType)
     {
+        this.watchForPASignAndCloseBrowser();
         JSONArray array = new JSONArray();
         for (Transaction transaction : allTransactions) {
             array.put(transaction.toJson());
         }
 
         this.webView.loadUrl(Utils.APP_URL + "/purchase-agreements/" + marketType + "/direct?transactions=" + array);
+    }
+
+    private void watchForPASignAndCloseBrowser()
+    {
+        new JsonRequest<JSONObject>(Utils.url("mobile-app/verify-purchase-agreement"), PackageSelectionActivity.CRM_BEARER_TOKEN) {
+            @Override
+            public void onSuccess(JSONObject result) {
+                try {
+                    boolean status = result.getBoolean("status");
+                    if (! status) {
+                        Thread.sleep(500);
+                        dispatch(); // If status is false, continue pinging the URL until status becomes true
+                        return;
+                    }
+                    mainActivity.purchaseAgreementSigned();
+                } catch (JSONException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @SuppressLint("LogNotTimber")
+            @Override
+            public void onError(String errorMessage) {
+                Log.e("PA verification", errorMessage);
+            }
+        }.dispatch();
     }
 }
