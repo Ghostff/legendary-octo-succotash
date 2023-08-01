@@ -29,13 +29,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:paddingRight="10dp"
-                    android:paddingTop="10dp"
+                    android:gravity="center"
             >
 
                 <ImageView
                         android:id="@+id/packageBackgroundImage"
-                        android:layout_width="58dp"
-                        android:layout_height="58dp"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:src="@drawable/platinum"
                         android:scaleType="centerCrop" />
 
@@ -44,10 +44,9 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginTop="10dp"
                         android:textStyle="bold"
                         android:textColor="@color/black"
-                        android:text="Platinum"
+                        android:text="$30k Platinum Package"
                         android:textSize="18sp" />
 
                 <TextView
@@ -55,7 +54,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
-                        android:layout_marginTop="10dp"
                         android:text="$30,000"
                         android:textColor="@color/black"
                         android:textSize="20sp" />
@@ -68,12 +66,15 @@
                     android:id="@+id/packageTitleView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingHorizontal="20dp"
                     android:layout_marginVertical="8dp"
-                    android:text="3 Days workshop"
+                    android:text="Advanced Bus Tour\n
+Maximum Cashflow Class\n
+Wholesale and Commercial workshop\n
+Mentoring for 1 Year\n
+Membership in the Wolfpack Network\n"
                     android:textColor="@color/black"
-                    android:gravity="center"
-                    android:textSize="18sp"
-                    android:textAlignment="center"/>
+                    android:textSize="16sp"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.cardview.widget.CardView>

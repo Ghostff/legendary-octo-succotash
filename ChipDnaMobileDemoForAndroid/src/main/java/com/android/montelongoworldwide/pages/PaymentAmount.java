@@ -49,6 +49,7 @@ public class PaymentAmount extends AbstractToggleable {
         this.remainingAmount = this.layout.findViewById(R.id.remainingAmount);
 
         this.continueButton.setOnClickListener(v -> mainActivity.setAmount(getAmount()));
+        this.setVisibility(false);
     }
 
     @SuppressLint("DefaultLocale")

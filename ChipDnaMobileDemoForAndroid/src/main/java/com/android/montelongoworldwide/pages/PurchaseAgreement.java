@@ -8,6 +8,9 @@ import android.webkit.WebViewClient;
 import com.android.R;
 import com.android.montelongoworldwide.PackageSelectionActivity;
 import com.android.montelongoworldwide.Utils;
+import org.json.JSONArray;
+
+import java.util.ArrayList;
 
 public class PurchaseAgreement extends AbstractToggleable {
 
@@ -27,13 +30,16 @@ public class PurchaseAgreement extends AbstractToggleable {
 
         // Ensure links and redirects open within the WebView
         this.webView.setWebViewClient(new WebViewClient());
+        this.setVisibility(false);
     }
 
-    @Override
-    public void setVisibility(boolean visible) {
-        // Load Google webpage
-        this.webView.loadUrl(Utils.APP_URL + "/purchase-agreements/real-estate/direct");
+    public void sign(ArrayList<Transaction> allTransactions, String marketType)
+    {
+        JSONArray array = new JSONArray();
+        for (Transaction transaction : allTransactions) {
+            array.put(transaction.toJson());
+        }
 
-        super.setVisibility(visible);
+        this.webView.loadUrl(Utils.APP_URL + "/purchase-agreements/" + marketType + "/direct?transactions=" + array);
     }
 }

@@ -40,11 +40,6 @@ public abstract class Page<T> extends AbstractToggleable
     public abstract T buildModelFromJson(JSONObject jsonObject) throws JSONException;
     public abstract View onRender(T model, int index);
 
-    public boolean isEmpty()
-    {
-        return this.models.isEmpty();
-    }
-
     public void render(String searchKeyword)
     {
         // Remove all existing card components from the cardContainer

@@ -22,6 +22,7 @@ public class PaymentCompleted extends AbstractToggleable {
 
         // Add layout1 to the parent layout
         parentLayout.addView(this.layout);
+        this.setVisibility(false);
     }
 
     @Override

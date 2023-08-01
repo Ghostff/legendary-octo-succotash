@@ -9,13 +9,15 @@ import java.util.Objects;
 public class Utils
 {
 //    public static String APP_URL = "https://montelongoworldwide.net";
-    public static String APP_URL = "https://ad6b-2600-1700-5005-3120-519a-1062-73e8-29a9.ngrok-free.app";
+    public static String APP_URL = "https://22b1-2600-1700-5005-3120-5916-634f-7929-b449.ngrok-free.app";
     @SuppressLint("DefaultLocale")
     public static String formatAmount(int amount)
     {
         return String.format("$%,.2f", amount / 100.0);
     }
 
+
+    @SuppressLint("SimpleDateFormat")
     public static String formatDate(String dateString) {
         SimpleDateFormat sourceDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         SimpleDateFormat targetDateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm a");

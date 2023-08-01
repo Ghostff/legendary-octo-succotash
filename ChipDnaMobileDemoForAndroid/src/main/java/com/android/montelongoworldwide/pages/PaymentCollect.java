@@ -73,7 +73,8 @@ public class PaymentCollect extends AbstractToggleable {
 
 
         // we should process api payment here (this is just for demo)
-        this.submitPaymentButton.setOnClickListener(v -> mainActivity.setTransaction(new Transaction(amount, "foo")));
+        this.submitPaymentButton.setOnClickListener(v -> mainActivity.setTransaction(new Transaction(amount, "foo", "credit", "4444")));
+        this.setVisibility(false);
     }
 
     public void setAmount(int amount) {

@@ -7,28 +7,31 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import com.android.R;
 import com.android.montelongoworldwide.PackageSelectionActivity;
+import com.android.montelongoworldwide.Utils;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class Package extends Page<Package.Model>
 {
     public class Model
     {
-        public final String title, name;
+        public final String id, name, description;
         public final int price;
 
-        public Model(String name, int price, String title) {
-            this.price = price;
+        public Model(String id, String name, String description, int price) {
+            this.id = id;
             this.name = name;
-            this.title = title;
+            this.description = description;
+            this.price = price;
         }
+    }
 
-        public String getHumanPrice()
-        {
-            return String.format("$%,.2f", this.price / 100.0);
-        }
+    protected boolean showPrice = false;
+
+    public Package setShowPrice(boolean showPrice) {
+        this.showPrice = showPrice;
+
+        return this;
     }
 
     public Package(PackageSelectionActivity mainActivity)
@@ -38,20 +41,19 @@ public class Package extends Page<Package.Model>
 
     @Override
     public boolean onFilter(String searchKeyword, Model model) {
-        return model.title.toLowerCase().contains(searchKeyword) ||
+        return model.description.toLowerCase().contains(searchKeyword) ||
                 String.valueOf(model.price).toLowerCase().contains(searchKeyword) ||
                 model.name.toLowerCase().contains(searchKeyword);
     }
 
     @Override
-    public Model buildModelFromJson(JSONObject jsonObject) throws JSONException {
-
-        this.models = new ArrayList<Model>() {{
-            add(new Model("Platinum", 30_000 * 100, "3 Days Workshop"));
-            add(new Model("Gold", 17_000 * 100, "Advanced Bus Tour"));
-            add(new Model("Silver", 10_000 * 100, "Mentoring"));
-        }};
-        return null;
+    public Model buildModelFromJson(JSONObject pkg) throws JSONException {
+        return new Model(
+            pkg.getString("Id"),
+            pkg.getString("Name"),
+            pkg.getString("Description"),
+            Integer.parseInt(pkg.getString("UnitPrice")) * 100
+        );
     }
 
     @Override
@@ -65,12 +67,12 @@ public class Package extends Page<Package.Model>
         CardView planInterCardView = cardView.findViewById(R.id.planInterCardView);
 
         nameView.setText(pkg.name);
-        priceView.setText(pkg.getHumanPrice());
-        titleView.setText(pkg.title);
+        priceView.setText(this.showPrice ? Utils.formatAmount(pkg.price) : "");
+        titleView.setText(pkg.description);
 
-        if (pkg.name.equalsIgnoreCase("platinum")) {
+        if (pkg.price == 30_000 * 100) {
             bgImageView.setImageResource(R.drawable.platinum);
-        } else if (pkg.name.equalsIgnoreCase("gold")) {
+        } else if (pkg.price == 17_000 * 100) {
             bgImageView.setImageResource(R.drawable.gold);
         } else {
             bgImageView.setImageResource(R.drawable.silver);

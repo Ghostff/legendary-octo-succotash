@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -31,21 +32,15 @@ public class PackageSelectionActivity extends AppCompatActivity {
     protected Event.Model selectedEvent;
     protected Datetime.Model selectedDatetime;
     protected User.Model selectedUser;
-
     protected Package.Model selectedPackage;
 
 
     protected Market market;
-
     protected User user;
     protected TextView selectedMarketView;
     protected TextView selectedUserView;
     protected CardView footerCardView;
-    protected Transaction currentTransaction;
     protected ArrayList<Transaction> allTransactions = new ArrayList<>();
-    protected Dictionary<String, String> lastTransaction = new Hashtable<>();
-    protected boolean signedPA = false;
-    protected boolean showPurchaseAgreementPage = false;
     protected Package pkg;
     protected EditText searchEditText;
     protected PaymentAmount paymentAmount;
@@ -65,33 +60,32 @@ public class PackageSelectionActivity extends AppCompatActivity {
             @Override
             public void onSuccess(JSONArray markets) {
                 market.setModels(markets).setVisibility(true);
-                refresh();
+                loadingLayout.setVisibility(View.GONE);
             }
 
             @Override
             public void onError(String e) {
-                Log.e("error", e);
+                Log.e("markets-error", e);
             }
         }.dispatch();
 
-        try {
-            this.packages.put(new JSONObject()
-                    .put("name", "Platinum")
-                    .put("price", 30_000 * 100)
-                    .put("title", "3 Days Workshop"));
 
-            this.packages.put(new JSONObject()
-                    .put("name", "Platinum")
-                    .put("price", 17_000 * 100)
-                    .put("title", "Advanced Bus Tour"));
+        new JsonRequest<JSONArray>(Utils.url("mobile-app/packages"), PackageSelectionActivity.CRM_BEARER_TOKEN) {
+            @Override
+            public void onSuccess(JSONArray markets) {
+                pkg.setModels(markets);
+            }
 
-            this.packages.put(new JSONObject()
-                    .put("name", "Platinum")
-                    .put("price", 10_000 * 100)
-                    .put("title", "Mentoring"));
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+            @Override
+            public void onError(String e) {
+                try {
+                    // Fallback if quickbooks fails
+                    pkg.setShowPrice(true).setModels(new JSONArray("[{\"Id\":\"1\",\"Name\":\"Platinum\",\"UnitPrice\":\"30000\",\"Description\":\"3 Days Workshop\"},{\"Id\":\"2\",\"Name\":\"Gold\",\"UnitPrice\":\"17000\",\"Description\":\"Advanced Bus Tour\"},{\"Id\":\"3\",\"Name\":\"Silver\",\"UnitPrice\":\"10000\",\"Description\":\"Mentoring\"}]"));
+                } catch (JSONException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }.dispatch();
     }
 
     public View getLayout(@LayoutRes int resource, ViewGroup root) {
@@ -125,86 +119,30 @@ public class PackageSelectionActivity extends AppCompatActivity {
 
         this.footerCardView.setVisibility(View.GONE);
         this.searchEditText.addTextChangedListener(new TextWatcher() {
+            protected String lastKeyword = "";
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Call a method to filter the card components based on the search input
-                variableRender(s.toString().trim().toLowerCase());
+                String keyword = s.toString().trim().toLowerCase();
+                // only rerender when search changes
+                if (!keyword.equals(this.lastKeyword)) {
+                    Page<?> page = (Page<?>) pages.get(pageIndex);
+                    if (page != null) {
+                        page.render(this.lastKeyword = keyword);
+                    }
+                }
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
     }
 
-    protected void variableRender(String searchKeyword)
-    {
-        for (AbstractToggleable view : new AbstractToggleable[] {
-                this.market,
-                this.user,
-                this.pkg,
-                this.paymentAmount,
-                this.paymentCollect,
-                this.paymentCompleted,
-                this.purchaseAgreement
-        }) {
-            view.setVisibility(false);
-        }
-
-        this.searchEditText.setVisibility(View.VISIBLE);
-        renderFooter();
-
-        // Call a method to filter the card components based on the search input
-        if (this.selectedMarket == null) {
-            this.market.render(searchKeyword);
-            this.market.setVisibility(true);
-        } else if (this.selectedUser == null) {
-            this.user.render(searchKeyword);
-            this.user.setVisibility(true);
-        } else if (this.selectedPackage == null) {
-            this.pkg.render(searchKeyword);
-            this.pkg.setVisibility(true);
-        } else {
-            this.searchEditText.setVisibility(View.GONE);
-            this.footerCardView.setVisibility(View.GONE);
-
-            if (this.showPurchaseAgreementPage) {
-                this.purchaseAgreement.setVisibility(true);
-                return;
-            }
-
-            if (this.currentTransaction == null) {
-                String packageTitle = this.selectedPackage.title;
-                int amount = this.getAmountDifference();
-//                this.paymentAmount.setVisibility(true, this.selectedMarket, this.selectedUser, packageTitle, amount);
-            } else if (this.currentTransaction.id == null) {
-//                this.paymentCollect.setVisibility(true, this.currentTransaction);
-            } else {
-                this.allTransactions.add(this.currentTransaction);
-                this.paymentCompleted.setVisibility(true);
-            }
-        }
-
-        this.loadingLayout.setVisibility(View.GONE);
-    }
-
-    public void refresh()
-    {
-        this.variableRender(null);
-    }
-
-    public void makeBusy()
-    {
-        this.loadingLayout.setVisibility(View.VISIBLE);
-    }
-
-
     protected void renderFooter()
     {
+        this.footerCardView.setVisibility(pageIndex > 4 || pageIndex == 0  ? View.GONE : View.VISIBLE);
         if (this.selectedMarket == null) return;
 
         StringBuilder market = new StringBuilder(this.selectedMarket.toString());
@@ -218,9 +156,11 @@ public class PackageSelectionActivity extends AppCompatActivity {
     protected void render(int pageIndex)
     {
         // hide footer and search after package is selected
-        int visibility = pageIndex > 4 || pageIndex == 0  ? View.GONE : View.VISIBLE;
-        this.searchEditText.setVisibility(visibility);
-        this.footerCardView.setVisibility(visibility);
+        this.searchEditText.setVisibility(View.GONE);
+        if (pageIndex < 4) {
+            this.searchEditText.setText("");
+            this.searchEditText.setVisibility(View.VISIBLE);
+        }
 
         for (AbstractToggleable page : this.pages.values()) {
             page.setVisibility(false);
@@ -268,7 +208,6 @@ public class PackageSelectionActivity extends AppCompatActivity {
     public void setUser(User.Model user)
     {
         this.selectedUser = user;
-        this.pkg.setModels(this.packages);
         this.moveForward();
     }
 
@@ -276,7 +215,7 @@ public class PackageSelectionActivity extends AppCompatActivity {
     {
         this.selectedPackage = pkg;
         String eventName = this.selectedMarketView.getText().toString();
-        this.paymentAmount.setLabel(eventName, this.selectedUser.name, this.selectedPackage.title);
+        this.paymentAmount.setLabel(eventName, this.selectedUser.name, this.selectedPackage.name);
         this.paymentAmount.setAmount(this.getAmountDifference());
         this.moveForward();
     }
@@ -289,6 +228,11 @@ public class PackageSelectionActivity extends AppCompatActivity {
 
     public void setTransaction(Transaction transaction)
     {
+        transaction.marketId = this.selectedMarket.id;
+        transaction.eventId = this.selectedEvent.id;
+        transaction.eventDatetimeId = this.selectedDatetime.id;
+        transaction.userId = this.selectedUser.id;
+        transaction.packageId = this.selectedPackage.id;
         this.allTransactions.add(transaction);
         this.moveForward();
     }
@@ -299,37 +243,17 @@ public class PackageSelectionActivity extends AppCompatActivity {
         this.setPackage(this.selectedPackage);
     }
 
+    public void signPurchaseAgreement()
+    {
+        this.purchaseAgreement.sign(this.allTransactions, this.selectedMarket.type);
+        this.moveForward();
+    }
+
     @Override
     public void onBackPressed() {
-        this.moveBackward();
-
-        // cant go back if PA is not signed.
-        /*if(!this.lastTransaction.isEmpty() && !this.signedPA) {
-            return;
+        if (this.pageIndex > 3) {
+            this.moveBackward();
         }
-
-        if (this.currentTransaction != null) {
-            this.paymentAmount.clearAmount();
-            this.setTransaction(null);
-            return;
-        }
-
-        if (this.selectedPackage != null) {
-            this.setPackage(null);
-            return;
-        }
-
-        if (this.selectedUser != null) {
-            this.setUser(null);
-            return;
-        }
-
-        if (this.selectedMarket != null) {
-            this.setMarket(null);
-            return;
-        }
-
-        super.onBackPressed();*/
     }
 
     /**
@@ -359,11 +283,11 @@ public class PackageSelectionActivity extends AppCompatActivity {
                     .setTitle("Confirm Purchase Agreement Signing")
                     .setMessage("You have not paid the full amount for this package. Are you sure you want to proceed with signing the purchase agreement?")
                     .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> moveForward())
+                    .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> signPurchaseAgreement())
                     .setNegativeButton(android.R.string.no, null)
                     .show();
         } else {
-            this.moveForward();
+            this.signPurchaseAgreement();
         }
     }
 

@@ -53,7 +53,6 @@ public class Event extends Page<Event.Model> {
 
     @Override
     public Model buildModelFromJson(JSONObject event) throws JSONException {
-        Log.e("startDates", event.getJSONArray("startDates").toString());
         return new Model(event.getInt("id"), event.getString("name"), event.getJSONArray("startDates"));
     }
 
