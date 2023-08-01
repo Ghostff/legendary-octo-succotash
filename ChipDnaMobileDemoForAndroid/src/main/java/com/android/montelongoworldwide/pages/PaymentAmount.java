@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.android.R;
 import com.android.montelongoworldwide.PackageSelectionActivity;
+import com.android.montelongoworldwide.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,16 +48,13 @@ public class PaymentAmount extends AbstractToggleable {
         this.continueButton = this.layout.findViewById(R.id.continueButton);
         this.remainingAmount = this.layout.findViewById(R.id.remainingAmount);
 
-        this.continueButton.setOnClickListener(v -> {
-            // Handle the cardContainer click event here
-            mainActivity.setTransaction(new Transaction(getAmount()));
-        });
+        this.continueButton.setOnClickListener(v -> mainActivity.setAmount(getAmount()));
     }
 
     @SuppressLint("DefaultLocale")
     protected void updateAmount()
     {
-        amount.setText(PackageSelectionActivity.formatAmount(this.getAmount()));
+        amount.setText(Utils.formatAmount(this.getAmount()));
     }
 
     protected int getAmount()
@@ -68,27 +66,24 @@ public class PaymentAmount extends AbstractToggleable {
         return Integer.parseInt(String.join("", this.numbers));
     }
 
-    public void setVisibility(boolean visible, Market.Model market, User.Model user, String packageTitle, int amount)
+    @SuppressLint("SetTextI18n")
+    public void setLabel(String eventName, String studentName, String packageTitle)
     {
-        this.layout.setVisibility(visible ? View.VISIBLE : View.GONE);
-        if (market != null && user != null && packageTitle != null) {
-            this.numbers.clear();
-            this.numbers.add(String.valueOf(this.maxAmount = amount));
-            this.remainingAmount.setText(PackageSelectionActivity.formatAmount(amount));
-            this.updateAmount();
-            this.selectedPackageView.setText(market + "\n" + user.name + "\n" + packageTitle);
-        }
+        this.selectedPackageView.setText(eventName + "\n" + studentName + "\n" + packageTitle);
+    }
+
+    public void setAmount(int amount)
+    {
+        this.numbers.clear();
+        this.numbers.add(String.valueOf(this.maxAmount = amount));
+        this.remainingAmount.setText(Utils.formatAmount(amount));
+        this.updateAmount();
     }
 
     public void clearAmount()
     {
         this.numbers.clear();
         this.updateAmount();
-    }
-
-    public void setVisibility(boolean visible)
-    {
-        this.setVisibility(visible, null, null, null, 0);
     }
 
     public void keypadListener(Button button)

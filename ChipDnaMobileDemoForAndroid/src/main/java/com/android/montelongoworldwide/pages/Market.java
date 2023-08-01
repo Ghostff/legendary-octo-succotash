@@ -1,49 +1,56 @@
 package com.android.montelongoworldwide.pages;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.R;
 import com.android.montelongoworldwide.PackageSelectionActivity;
+import com.android.montelongoworldwide.Utils;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class Market extends Page<Market.Model> {
     public class Model
     {
+        public final int id;
         public final String city, state, time, type;
 
-        public Model(String city, String state, String time, String type) {
+        public JSONArray events;
+
+        public Model(int id, String city, String state, String time, String type, JSONArray events) {
+            this.id = id;
             this.city = city;
             this.state = state;
             this.time = time;
             this.type = type;
+            this.events = events;
         }
 
         @NotNull
         @Override
         public String toString() {
-            return String.format("%s, %s %s", this.city, this.state, this.time);
+            return String.format("%s, %s", this.city, this.state);
         }
     }
 
     public Market(PackageSelectionActivity mainActivity)
     {
         super(mainActivity, R.layout.pages_market, R.id.marketModelContainer);
-        this.load();
     }
 
-    public void load()
-    {
-        this.models = new ArrayList<Model>() {{
-            add(new Model("Houston", "TX", "10/12/2023 09:30 PM", "real-estate"));
-            add(new Model("San Antonio", "TX", "10/22/2023 08:00 PM", "real-estate"));
-            add(new Model("Montgomery", "AL", "02/12/2023 05:30 PM", "cannabis"));
-            add(new Model("Little Rock", "AK", "12/01/2023 07:00 PM", "real-estate"));
-            add(new Model("Tallahassee", "FL", "04/22/2023 09:30 PM", "real-estate"));
-        }};
+    public Model buildModelFromJson(JSONObject market) throws JSONException {
+        return new Model(
+                market.getInt("id"),
+                market.getString("city"),
+                market.getString("state"),
+                Utils.formatDate(market.getJSONArray("dates").getJSONObject(0).getString("start_at")),
+                market.getString("type"),
+                market.getJSONArray("events")
+        );
     }
 
     @Override

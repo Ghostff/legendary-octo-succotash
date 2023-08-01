@@ -1,19 +1,28 @@
 package com.android.montelongoworldwide.pages;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import com.android.R;
 import com.android.montelongoworldwide.PackageSelectionActivity;
+import com.android.montelongoworldwide.Utils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public abstract class Page<T> extends AbstractToggleable
 {
     protected final PackageSelectionActivity mainActivity;
     protected final LinearLayout cardContainer;
     protected final View noResultTextView;
-    protected List<T> models;
+    protected List<T> models = new ArrayList<>();
 
     public Page(PackageSelectionActivity mainActivity, int pageLayout, int cardContainer) {
         ViewGroup parentLayout = mainActivity.findViewById(R.id.mainPageContainer);
@@ -24,11 +33,17 @@ public abstract class Page<T> extends AbstractToggleable
         this.noResultTextView = mainActivity.getLayout(R.layout.components_no_result_found, null);
         this.cardContainer = this.layout.findViewById(cardContainer);
         this.mainActivity = mainActivity;
+        this.setVisibility(false);
     }
 
-    public abstract void load();
     public abstract boolean onFilter(String searchKeyword, T model);
+    public abstract T buildModelFromJson(JSONObject jsonObject) throws JSONException;
     public abstract View onRender(T model, int index);
+
+    public boolean isEmpty()
+    {
+        return this.models.isEmpty();
+    }
 
     public void render(String searchKeyword)
     {
@@ -48,7 +63,28 @@ public abstract class Page<T> extends AbstractToggleable
         int index = 0;
         // Create clones of the card component and set dynamic data
         for (T model : filteredList) {
-            this.cardContainer.addView(this.onRender(model, index++));
+            int finalIndex = index++;
+            this.mainActivity.runOnUiThread(() -> {
+                this.cardContainer.addView(this.onRender(model, finalIndex));
+            });
         }
+    }
+
+    public Page<T> setModels(JSONArray jsonArray)
+    {
+        if (jsonArray != null) {
+            this.models.clear();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                try {
+                    this.models.add(this.buildModelFromJson(jsonArray.getJSONObject(i)));
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        this.render(null);
+
+        return this;
     }
 }

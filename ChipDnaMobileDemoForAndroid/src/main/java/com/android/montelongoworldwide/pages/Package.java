@@ -7,6 +7,8 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import com.android.R;
 import com.android.montelongoworldwide.PackageSelectionActivity;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -32,16 +34,6 @@ public class Package extends Page<Package.Model>
     public Package(PackageSelectionActivity mainActivity)
     {
         super(mainActivity, R.layout.pages_package, R.id.packageModelContainer);
-        this.load();
-    }
-
-    @Override
-    public void load() {
-        this.models = new ArrayList<Model>() {{
-            add(new Model("Platinum", 30_000 * 100, "3 Days Workshop"));
-            add(new Model("Gold", 17_000 * 100, "Advanced Bus Tour"));
-            add(new Model("Silver", 10_000 * 100, "Mentoring"));
-        }};
     }
 
     @Override
@@ -49,6 +41,17 @@ public class Package extends Page<Package.Model>
         return model.title.toLowerCase().contains(searchKeyword) ||
                 String.valueOf(model.price).toLowerCase().contains(searchKeyword) ||
                 model.name.toLowerCase().contains(searchKeyword);
+    }
+
+    @Override
+    public Model buildModelFromJson(JSONObject jsonObject) throws JSONException {
+
+        this.models = new ArrayList<Model>() {{
+            add(new Model("Platinum", 30_000 * 100, "3 Days Workshop"));
+            add(new Model("Gold", 17_000 * 100, "Advanced Bus Tour"));
+            add(new Model("Silver", 10_000 * 100, "Mentoring"));
+        }};
+        return null;
     }
 
     @Override

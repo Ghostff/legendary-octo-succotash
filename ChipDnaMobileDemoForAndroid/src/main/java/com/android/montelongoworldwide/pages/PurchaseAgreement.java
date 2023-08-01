@@ -7,6 +7,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import com.android.R;
 import com.android.montelongoworldwide.PackageSelectionActivity;
+import com.android.montelongoworldwide.Utils;
 
 public class PurchaseAgreement extends AbstractToggleable {
 
@@ -31,8 +32,7 @@ public class PurchaseAgreement extends AbstractToggleable {
     @Override
     public void setVisibility(boolean visible) {
         // Load Google webpage
-        this.webView.loadUrl("https://google.com");
-//        this.webView.loadUrl("https://montelongoworldwide.net/purchase-agreements/event/1/user/1");
+        this.webView.loadUrl(Utils.APP_URL + "/purchase-agreements/real-estate/direct");
 
         super.setVisibility(visible);
     }

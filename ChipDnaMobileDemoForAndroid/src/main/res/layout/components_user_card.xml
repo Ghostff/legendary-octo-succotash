@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
     <android.widget.TableRow
-            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_marginVertical="5dp"
             android:paddingVertical="10dp"
@@ -15,7 +14,6 @@
 
 
         <androidx.cardview.widget.CardView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/roundCardView"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -24,7 +22,9 @@
             <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/test" />
+                    android:id="@+id/profileImage"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/avatar"/>
         </androidx.cardview.widget.CardView>
 
         <!-- User's Name, Email, and Phone -->

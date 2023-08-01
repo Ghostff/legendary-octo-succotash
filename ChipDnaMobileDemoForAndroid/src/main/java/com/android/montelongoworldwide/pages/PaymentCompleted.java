@@ -16,13 +16,9 @@ public class PaymentCompleted extends AbstractToggleable {
         this.mainActivity = mainActivity;
 
         this.addAnotherPaymentBtn = this.layout.findViewById(R.id.addAnotherPayment);
+
         this.addAnotherPaymentBtn.setOnClickListener(v -> mainActivity.addAnotherPayment());
-
-        this.layout.findViewById(R.id.singPa).setOnClickListener(v -> {
-            // Handle the cardContainer click event here
-            mainActivity.signPurchaseAgreements();
-        });;
-
+        this.layout.findViewById(R.id.singPa).setOnClickListener(v -> mainActivity.signPurchaseAgreements());;
 
         // Add layout1 to the parent layout
         parentLayout.addView(this.layout);
@@ -36,4 +32,5 @@ public class PaymentCompleted extends AbstractToggleable {
 
         super.setVisibility(visible);
     }
+
 }

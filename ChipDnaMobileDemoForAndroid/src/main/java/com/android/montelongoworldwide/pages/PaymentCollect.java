@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.android.R;
 import com.android.montelongoworldwide.PackageSelectionActivity;
+import com.android.montelongoworldwide.Utils;
 import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
 
@@ -17,6 +18,7 @@ public class PaymentCollect extends AbstractToggleable {
     protected final ConstraintLayout paymentKeyInContainer;
     protected final TabLayout paymentTabNavLayout;
     protected final Button submitPaymentButton;
+    private int amount;
 
     public PaymentCollect(PackageSelectionActivity mainActivity) {
         ViewGroup parentLayout = mainActivity.findViewById(R.id.mainPageContainer);
@@ -69,14 +71,12 @@ public class PaymentCollect extends AbstractToggleable {
             }
         });
 
-        this.submitPaymentButton.setOnClickListener(v -> {
-            // Handle the cardContainer click event here
-            mainActivity.setLastTransactionId("12232");
-        });
+
+        // we should process api payment here (this is just for demo)
+        this.submitPaymentButton.setOnClickListener(v -> mainActivity.setTransaction(new Transaction(amount, "foo")));
     }
 
-    public void setVisibility(boolean visible, Transaction currentTransaction) {
-        this.paymentAmountView.setText(PackageSelectionActivity.formatAmount(currentTransaction.amount));
-        this.setVisibility(visible);
+    public void setAmount(int amount) {
+        this.paymentAmountView.setText(Utils.formatAmount(this.amount = amount));
     }
 }

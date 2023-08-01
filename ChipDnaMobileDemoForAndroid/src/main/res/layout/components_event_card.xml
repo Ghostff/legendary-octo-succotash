@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/card_background"
+        app:cardCornerRadius="15dp"
+        android:layout_marginVertical="5dp"
+        app:contentPadding="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardElevation="0dp">
+
+    <TableRow
+            android:id="@+id/firstRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+    >
+        <!-- First child element -->
+        <androidx.cardview.widget.CardView
+                android:id="@+id/imageContainer"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:cardCornerRadius="13dp"
+                android:paddingHorizontal="10dp"
+                app:cardElevation="0dp"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="#6c9512">
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="FE"
+                    android:id="@+id/eventAbbreviation"
+                    android:textColor="#ffffff"
+                    android:gravity="center"
+                    android:textSize="20dp"
+                    android:textStyle="bold"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Second child element -->
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1"
+                android:paddingLeft="10dp"
+                android:gravity="center_vertical"
+                android:layout_marginStart="10dp">
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Front End"
+                    android:id="@+id/textViewTitle"
+                    android:textColor="@color/card_default"
+                    android:textSize="17sp" />
+        </LinearLayout>
+
+        <!-- Third child element -->
+        <LinearLayout
+                android:id="@+id/thirdChild"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:padding="10dp">
+            <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_chevron_right" />
+
+        </LinearLayout>
+    </TableRow>
+
+
+</androidx.cardview.widget.CardView>
