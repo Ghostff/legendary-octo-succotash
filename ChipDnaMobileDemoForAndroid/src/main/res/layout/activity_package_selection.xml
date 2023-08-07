@@ -1,54 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/mainPage"
-        tools:context=".montelongoworldwide.PackageSelectionActivity">
-
+        android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="0dp"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:id="@+id/mainPageContainer"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/include">
+            android:id="@+id/mainPage"
+            tools:context=".montelongoworldwide.PackageSelectionActivity">
 
-        <EditText
-                android:id="@+id/searchEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/search_input_bg"
-                android:padding="15dp"
-                android:textSize="16sp"
-                android:hint="@string/search"
-                android:textColorHint="@color/mute"
-                android:textColor="@color/mute"
-                android:layout_margin="20dp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:id="@+id/mainPageContainer"
                 app:layout_constraintTop_toTopOf="parent"
-        />
+                app:layout_constraintBottom_toBottomOf="@+id/include">
 
-<!--            <include layout="@layout/pages_market"/>-->
-<!--            <include layout="@layout/pages_event"/>-->
-<!--            <include layout="@layout/pages_datetime"/>-->
-<!--            <include layout="@layout/pages_user"/>-->
-<!--            <include layout="@layout/pages_package"/>-->
-<!--            <include layout="@layout/pages_payment_amount"/>-->
-<!--            <include layout="@layout/pages_payment_collection"/>-->
-<!--            <include layout="@layout/pages_payment_completed"/>-->
-<!--            <include layout="@layout/pages_payment_completed"/>-->
+            <EditText
+                    android:id="@+id/searchEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/search_input_bg"
+                    android:padding="15dp"
+                    android:textSize="16sp"
+                    android:hint="@string/search"
+                    android:textColorHint="@color/mute"
+                    android:textColor="@color/mute"
+                    android:layout_margin="20dp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+            />
+
+    <!--            <include layout="@layout/pages_market"/>-->
+    <!--            <include layout="@layout/pages_event"/>-->
+    <!--            <include layout="@layout/pages_datetime"/>-->
+    <!--            <include layout="@layout/pages_user"/>-->
+    <!--            <include layout="@layout/pages_package"/>-->
+    <!--            <include layout="@layout/pages_payment_amount"/>-->
+    <!--            <include layout="@layout/pages_payment_collection"/>-->
+    <!--            <include layout="@layout/pages_payment_completed"/>-->
+    <!--            <include layout="@layout/pages_payment_completed"/>-->
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include layout="@layout/components_sticky_footer" android:id="@+id/include"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <include layout="@layout/components_sticky_footer" android:id="@+id/include"/>
-
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

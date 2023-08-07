@@ -27,4 +27,6 @@
     <string name="checked_in_students">CHECKED IN STUDENTS</string>
     <string name="events">Events</string>
     <string name="event_datetimes">Event Datetimes</string>
+    <string name="city_state">City, STATE</string>
+    <string name="drag_to_refresh">No pinpad found. Drag down to refresh</string>
 </resources>

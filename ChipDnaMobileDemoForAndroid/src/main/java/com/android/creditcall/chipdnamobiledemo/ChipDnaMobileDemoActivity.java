@@ -35,35 +35,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.R;
-import com.creditcall.chipdnamobile.Application;
-import com.creditcall.chipdnamobile.ChipDnaMobile;
-import com.creditcall.chipdnamobile.ChipDnaMobileException;
-import com.creditcall.chipdnamobile.ChipDnaMobileSerializer;
-import com.creditcall.chipdnamobile.ChipDnaMobileUtils;
-import com.creditcall.chipdnamobile.ConfigurationErrorCode;
-import com.creditcall.chipdnamobile.IApplicationSelectionListener;
-import com.creditcall.chipdnamobile.ICardDetailsListener;
-import com.creditcall.chipdnamobile.IConfigurationUpdateListener;
-import com.creditcall.chipdnamobile.IConnectAndConfigureFinishedListener;
-import com.creditcall.chipdnamobile.IDeferredAuthorizationListener;
-import com.creditcall.chipdnamobile.IDeviceUpdateListener;
-import com.creditcall.chipdnamobile.IForceAcceptanceListener;
-import com.creditcall.chipdnamobile.IPartialApprovalListener;
-import com.creditcall.chipdnamobile.IProcessReceiptFinishedListener;
-import com.creditcall.chipdnamobile.ISignatureCaptureListener;
-import com.creditcall.chipdnamobile.ISignatureVerificationListener;
-import com.creditcall.chipdnamobile.ITmsUpdateListener;
-import com.creditcall.chipdnamobile.ITransactionFinishedListener;
-import com.creditcall.chipdnamobile.ITransactionUpdateListener;
-import com.creditcall.chipdnamobile.IUserNotificationListener;
-import com.creditcall.chipdnamobile.IVerifyIdListener;
-import com.creditcall.chipdnamobile.IVoiceReferralListener;
-import com.creditcall.chipdnamobile.Parameter;
-import com.creditcall.chipdnamobile.ParameterKeys;
-import com.creditcall.chipdnamobile.ParameterValues;
-import com.creditcall.chipdnamobile.Parameters;
+import com.creditcall.chipdnamobile.*;
 
 import org.xmlpull.v1.XmlPullParserException;
+import timber.log.Timber;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -85,11 +60,11 @@ public class ChipDnaMobileDemoActivity extends AppCompatActivity implements
     }
 
     //Replace the APP_ID with your APPLICATION ID
-    private static final String APP_ID = "CEMDEMO";
+    private static final String APP_ID = "AMPAYMENTCOLLECT";
 
     // Replace the APIKEY with your Gateway API KEY as found in the
     // Gateway Control Panel's options/ security keys page
-    private static final String APIKEY = "2F822Rw39fx762MaV7Yy86jXGTC7sCDy";
+    private static final String APIKEY = "Rh2ybtc2zH2vv3b9932z3jB5437qqP3z";
 
 
     private static final String CURRENCY = "USD";
@@ -98,7 +73,7 @@ public class ChipDnaMobileDemoActivity extends AppCompatActivity implements
     // and a production device will only work in LiveEnvironment
     // Using the device in the wrong environment results in an  IncompatibleOSWithAppMode during
     // device configuration,
-    private static final String ENVIRONMENT = ParameterValues.TestEnvironment;
+    private static final String ENVIRONMENT = ParameterValues.LiveEnvironment;
 
 
     public static final String LOGGER_STR = "ChipDnaMobileDemo";
@@ -221,7 +196,7 @@ public class ChipDnaMobileDemoActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which activity is returning a result. We are only bothered about the SelectPinPadActivity.
-        super.onActivityResult(requestCode, resultCode, data);
+//        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SelectPinPadActivity.ACTIVITY_REQUEST_CODE) {
             switch (resultCode) {
                 // Result ok, begin the process of connecting to the PINpad so enable the connectToPinPadButton.
@@ -372,14 +347,12 @@ public class ChipDnaMobileDemoActivity extends AppCompatActivity implements
                             String inputStr = input.getText().toString();
 
                             if (inputStr.length() > 0) {
-
                                 new AsyncTask<String, Void, Parameters>() {
                                     @Override
                                     protected Parameters doInBackground(String... params) {
                                         // send a request containing the entered password so it can be handled by ChipDnaMobile.
                                         Parameters requestParameters = new Parameters();
                                         requestParameters.add(ParameterKeys.Password, params[0]);
-                                        requestParameters.add(ParameterKeys.ChangePassword, "1234");
                                         Parameters response = ChipDnaMobile.initialize(getApplicationContext(), requestParameters);
                                         return response;
                                     }

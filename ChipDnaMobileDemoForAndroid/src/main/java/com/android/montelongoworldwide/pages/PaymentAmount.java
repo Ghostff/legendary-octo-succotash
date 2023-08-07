@@ -2,8 +2,6 @@ package com.android.montelongoworldwide.pages;
 
 import android.annotation.SuppressLint;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
@@ -48,7 +46,7 @@ public class PaymentAmount extends AbstractToggleable {
         this.continueButton = this.layout.findViewById(R.id.continueButton);
         this.remainingAmount = this.layout.findViewById(R.id.remainingAmount);
 
-        this.continueButton.setOnClickListener(v -> mainActivity.setAmount(getAmount()));
+        this.continueButton.setOnClickListener(v -> mainActivity.setPaymentCollect(getAmount()));
         this.setVisibility(false);
     }
 

@@ -1,15 +1,20 @@
 package com.android.montelongoworldwide;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Handler;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Hashtable;
 import java.util.Objects;
 
 public class Utils
 {
 //    public static String APP_URL = "https://montelongoworldwide.net";
-    public static String APP_URL = "https://22b1-2600-1700-5005-3120-5916-634f-7929-b449.ngrok-free.app";
+    public static String APP_URL = "https://dac6-2600-1700-5005-3120-c9b1-eef5-55c0-5c65.ngrok-free.app";
     @SuppressLint("DefaultLocale")
     public static String formatAmount(int amount)
     {
@@ -33,5 +38,45 @@ public class Utils
     public static String url(String uri)
     {
         return Utils.APP_URL + "/api/v1/" + uri;
+    }
+
+    public static AlertDialog alert(
+            Context context,
+            String title,
+            String message,
+            final DialogInterface.OnClickListener onOk,
+            final DialogInterface.OnClickListener onCancel
+    )
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
+        builder.setPositiveButton("OK", onOk);
+        if (onCancel != null) {
+            builder.setNegativeButton("Cancel", onCancel);
+        }
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        return dialog;
+    }
+
+    public static AlertDialog alert(Context context, String title, String message) {
+        return alert(context, title, message, (dialog, which) -> dialog.dismiss(), null);
+    }
+
+    public static AlertDialog alert(AlertDialog dialog, String title, String message)
+    {
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
+
+        dialog.setTitle(title);
+        dialog.setMessage(message);
+        dialog.show();
+
+        return dialog;
     }
 }

@@ -7,16 +7,25 @@ import java.lang.reflect.Field;
 
 public class Transaction {
     public final int amount;
-    public final String id, type, last4;
-    public int marketId, eventId, eventDatetimeId, userId;
-    public String packageId;
 
-    public Transaction(int amount, String id, String type, String last4) {
+    public String id;
+    public String type;
+    public String last4;
+    public final String packageId;
+    public final int marketId;
+    public final int eventId;
+    public final int eventDatetimeId;
+    public final int userId;
+
+    public Transaction(int amount, int marketId, int eventId, int eventDatetimeId, int userId, String packageId) {
         this.amount = amount;
-        this.id = id;
-        this.type = id;
-        this.last4 = id;
+        this.marketId = marketId;
+        this.eventId = eventId;
+        this.eventDatetimeId = eventDatetimeId;
+        this.userId = userId;
+        this.packageId = packageId;
     }
+
 
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
