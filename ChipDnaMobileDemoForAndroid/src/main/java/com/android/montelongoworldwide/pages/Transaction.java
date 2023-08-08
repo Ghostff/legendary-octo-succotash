@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
+import java.util.Date;
 
 public class Transaction {
     public final int amount;
@@ -11,7 +12,9 @@ public class Transaction {
     public String id;
     public String type;
     public String last4;
+    public String receipt;
     public final String packageId;
+    public final String refId;
     public final int marketId;
     public final int eventId;
     public final int eventDatetimeId;
@@ -24,6 +27,7 @@ public class Transaction {
         this.eventDatetimeId = eventDatetimeId;
         this.userId = userId;
         this.packageId = packageId;
+        this.refId = eventDatetimeId + ":" + userId + ":" + (new Date()).getTime();
     }
 
 

@@ -40,7 +40,10 @@ public class PurchaseAgreement extends AbstractToggleable {
 
     public void sign(ArrayList<Transaction> allTransactions, String marketType)
     {
-        this.watchForPASignAndCloseBrowser();
+        // while there can be many transactions, core vars like, marketId, eventId, eventDatetimeId, userId and
+        // packageId are duplicated across each transaction
+        this.watchForPASignAndCloseBrowser(allTransactions.get(0));
+
         JSONArray array = new JSONArray();
         for (Transaction transaction : allTransactions) {
             array.put(transaction.toJson());
@@ -49,9 +52,10 @@ public class PurchaseAgreement extends AbstractToggleable {
         this.webView.loadUrl(Utils.APP_URL + "/purchase-agreements/" + marketType + "/direct?transactions=" + array);
     }
 
-    private void watchForPASignAndCloseBrowser()
+    private void watchForPASignAndCloseBrowser(Transaction transaction)
     {
-        new JsonRequest<JSONObject>(Utils.url("mobile-app/verify-purchase-agreement"), PackageSelectionActivity.CRM_BEARER_TOKEN) {
+        String uri = "mobile-app/verify-purchase-agreement/" + transaction.eventDatetimeId + "/" + transaction.userId;
+        new JsonRequest<JSONObject>(Utils.url(uri), PackageSelectionActivity.CRM_BEARER_TOKEN) {
             @Override
             public void onSuccess(JSONObject result) {
                 try {

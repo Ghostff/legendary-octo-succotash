@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Handler;
+import android.widget.Button;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,7 +15,7 @@ import java.util.Objects;
 public class Utils
 {
 //    public static String APP_URL = "https://montelongoworldwide.net";
-    public static String APP_URL = "https://dac6-2600-1700-5005-3120-c9b1-eef5-55c0-5c65.ngrok-free.app";
+    public static String APP_URL = "https://e7d7-2600-1700-5005-3120-9451-6444-66fa-3dad.ngrok-free.app";
     @SuppressLint("DefaultLocale")
     public static String formatAmount(int amount)
     {
@@ -52,7 +53,10 @@ public class Utils
         builder.setTitle(title);
         builder.setMessage(message);
         builder.setIcon(android.R.drawable.ic_dialog_alert);
-        builder.setPositiveButton("OK", onOk);
+        if (onOk != null) {
+            builder.setPositiveButton("OK", onOk);
+        }
+
         if (onCancel != null) {
             builder.setNegativeButton("Cancel", onCancel);
         }
@@ -67,7 +71,7 @@ public class Utils
         return alert(context, title, message, (dialog, which) -> dialog.dismiss(), null);
     }
 
-    public static AlertDialog alert(AlertDialog dialog, String title, String message)
+    public static AlertDialog alert(AlertDialog dialog, String title, String message, boolean isStatic)
     {
         if (dialog.isShowing()) {
             dialog.dismiss();
@@ -77,6 +81,17 @@ public class Utils
         dialog.setMessage(message);
         dialog.show();
 
+        Button okBtn = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        Button cancelBtn = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        if (okBtn != null) okBtn.setEnabled(!isStatic);
+        if (cancelBtn != null) cancelBtn.setEnabled(!isStatic);
+
         return dialog;
+    }
+
+
+    public static AlertDialog alert(AlertDialog dialog, String title, String message)
+    {
+        return alert(dialog, title, message, false);
     }
 }

@@ -61,6 +61,7 @@ public class PackageSelectionActivity extends AppCompatActivity implements Activ
 
     public PackageSelectionActivity()
     {
+        PackageSelectionActivity context = this;
         new JsonRequest<JSONArray>(Utils.url("mobile-app/markets"), PackageSelectionActivity.CRM_BEARER_TOKEN) {
             @Override
             public void onSuccess(JSONArray markets) {
@@ -69,7 +70,7 @@ public class PackageSelectionActivity extends AppCompatActivity implements Activ
 
             @Override
             public void onError(String e) {
-                Log.e("markets-error", e);
+                Utils.alert(context, "Error", "Could not load markets.\n" + e, null, null);
             }
         }.dispatch();
 

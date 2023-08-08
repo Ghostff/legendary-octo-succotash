@@ -102,12 +102,12 @@ public class PaymentCollect extends AbstractToggleable {
 
         // The user reference is needed to be to able to access the transaction on WEBMis.
         // The reference should be unique to a transaction, so it is suggested that the reference is generated, similar to the example below.
-//        requestParameters.add(ParameterKeys.UserReference, "this will be the user_id and event_datetime_id");
-        requestParameters.add(ParameterKeys.UserReference, transaction.eventDatetimeId + ":" + transaction.userId);
+        requestParameters.add(ParameterKeys.UserReference, transaction.refId);
 
         requestParameters.add(ParameterKeys.TransactionType, ParameterValues.Sale);
         requestParameters.add(ParameterKeys.PaymentMethod, ParameterValues.Card);
         requestParameters.add(ParameterKeys.AutoConfirm, ParameterValues.TRUE);
+        //TransactionErrorCode.html#UserReferenceDuplicate
 
         // Use an instance of ChipDnaMobile to begin startTransaction.
         Parameters response = ChipDnaMobile.getInstance().startTransaction(requestParameters);
@@ -126,16 +126,14 @@ public class PaymentCollect extends AbstractToggleable {
             if (action.equalsIgnoreCase("CardTapped")
                 || action.equalsIgnoreCase("SmartcardInserted")
                 || action.equalsIgnoreCase("CardSwiped")) {
-                context.runOnUiThread(() -> Utils.alert(alertDialog, "Processing", "Processing, Please wait..."));
+                context.runOnUiThread(() -> Utils.alert(alertDialog, "Processing", "Processing, Please wait...", true));
             }
 
-            log("1111");
             log(parameters.getValue(ParameterKeys.TransactionUpdate));
         }
 
         @Override
         public void onTransactionFinishedListener(Parameters parameters) {
-            Log.e("error", "Failed to initialise PINpad: " + parameters.getValue(ParameterKeys.Errors));
             log("onTransactionFinishedListener =>", parameters);
 
             String errorMsg = parameters.getValue(ParameterKeys.ErrorDescription);
@@ -153,11 +151,12 @@ public class PaymentCollect extends AbstractToggleable {
                     return;
                 }
 
-                // @todo update transaction and kick of PA with (context.setPaymentCompleted(updatedTransaction))
-                log(String.valueOf(receipt));
-                log(String.valueOf(type));
-                log(String.valueOf(transactionId));
-                log(String.valueOf(cardLast4));
+                alertDialog.dismiss();
+                transaction.id = transactionId;
+                transaction.type = type.equalsIgnoreCase("card") ? "credit" : type.toLowerCase();
+                transaction.last4 = cardLast4;
+                transaction.receipt = receipt;
+                context.setPaymentCompleted(transaction);
             });
         }
 
