@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/card_default" />
-    <corners android:radius="7dp" />
-</shape>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Disabled state -->
+    <item android:state_enabled="false">
+        <shape>
+            <solid android:color="@color/disabled_card_default" />
+            <corners android:radius="7dp" />
+        </shape>
+    </item>
+
+    <!-- Default state -->
+    <item>
+        <shape>
+            <solid android:color="@color/card_default" />
+            <corners android:radius="7dp" />
+        </shape>
+    </item>
+</selector>

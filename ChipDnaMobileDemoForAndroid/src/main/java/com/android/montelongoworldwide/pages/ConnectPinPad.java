@@ -4,8 +4,12 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.core.app.ActivityCompat;
@@ -24,6 +28,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class ConnectPinPad extends AbstractToggleable {
+
+
     class PinPad {
         public final String name, connectionType, displayName;
         private final String connectionTypeLabelBluetooth = "[BT] ";
@@ -48,6 +54,7 @@ public class ConnectPinPad extends AbstractToggleable {
 
     private final PackageSelectionActivity activity;
     private final LinearLayout cardContainer;
+    private final Button continueWithoutPinPad;
 
     //Replace the APP_ID with your APPLICATION ID
     private static final String APP_ID = "AMPAYMENTCOLLECT";
@@ -55,8 +62,8 @@ public class ConnectPinPad extends AbstractToggleable {
 
     // Replace the APIKEY with your Gateway API KEY as found in the
     // Gateway Control Panel's options/ security keys page
-    private static final String APIKEY = "Rh2ybtc2zH2vv3b9932z3jB5437qqP3z";
-//    private static final String APIKEY = "6457Thfj624V5r7WUwc5v6a68Zsd6YEm";
+//    public static final String APIKEY = "Rh2ybtc2zH2vv3b9932z3jB5437qqP3z";
+    public static final String APIKEY = "6457Thfj624V5r7WUwc5v6a68Zsd6YEm";
 
     // Note: for the Miura 810 device, a test device will only work in testEnviornment
     // and a production device will only work in LiveEnvironment
@@ -75,36 +82,34 @@ public class ConnectPinPad extends AbstractToggleable {
         this.cardContainer = this.layout.findViewById(R.id.pinPadModelContainer);
 
         this.emptyListTextView = this.layout.findViewById(R.id.emptyList);
-        // Find the SwipeRefreshLayout by its ID
 
+        this.continueWithoutPinPad = this.layout.findViewById(R.id.continueWithoutPinPad);
+        this.continueWithoutPinPad.setOnClickListener(v -> mainActivity.setPinPad(null));
+    }
+
+    @Override
+    public void setVisibility(boolean visible)
+    {
+        super.setVisibility(visible);
         // Initialise ChipDna Mobile before starting to interacting with the API. You can check if ChipDna Mobile has been initialised by using isInitialised()
         // It's possible that android may have cleaned up resources while the application has been in the background and needs to be re-initialised.
-        if (!ChipDnaMobile.isInitialized()) {
+        if (visible && !ChipDnaMobile.isInitialized()) {
             Parameters requestParameters = new Parameters();
             requestParameters.add(ParameterKeys.Password, DEFAULT_PASSWORD);
             Parameters response = ChipDnaMobile.initialize(activity.getApplicationContext(), requestParameters);
             String errors = response.getValue(ParameterKeys.Errors);
-            mainActivity.toggleRefreshing(true);
+            this.activity.toggleRefreshing(true);
 
             if (errors == null && ChipDnaMobile.isInitialized()) {
                 this.setCredentials();
 
-
                 ChipDnaMobile chipDna = ChipDnaMobile.getInstance();
                 chipDna.addConnectAndConfigureFinishedListener(parameters -> {
-                    activity.runOnUiThread(() -> {
-                        try {
-                            activity.setPinPad(parameters);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
+                    activity.runOnUiThread(() -> activity.setPinPad(parameters));
                 });
 
-
-                activity.toggleRefreshing(true); // this loading is closed on mainActivity render (for previous page)
                 final Parameters statusParameters = chipDna.getStatus(null);
-                // If bluetooth has been setup, auto connect to it.
+                // If bluetooth has been setup, auto connects to it.
                 if (statusParameters.getValue(ParameterKeys.PinPadName) != null && statusParameters.getValue(ParameterKeys.PinPadName).length() > 0) {
                     connectToPinPad();
                     return;
@@ -113,11 +118,11 @@ public class ConnectPinPad extends AbstractToggleable {
                 this.refresh();
             } else {
                 Utils.alert(this.activity, "error",  String.valueOf(errors));
-                mainActivity.toggleRefreshing(false);
+                this.activity.toggleRefreshing(false);
             }
         }
-    }
 
+    }
 
     @SuppressLint("SetTextI18n")
     protected void renderSelectablePinPads(List<PinPad> selectablePinPads)
@@ -163,12 +168,7 @@ public class ConnectPinPad extends AbstractToggleable {
         }
     }
 
-    protected void refresh() {
-        Parameters parameters = new Parameters();
-        parameters.add(ParameterKeys.SearchConnectionTypeBluetooth, ParameterValues.TRUE);
-        parameters.add(ParameterKeys.SearchConnectionTypeBluetoothLe, ParameterValues.TRUE);
-        parameters.add(ParameterKeys.SearchConnectionTypeUsb, ParameterValues.TRUE);
-
+    public void refresh() {
         ChipDnaMobile.getInstance().clearAllAvailablePinPadsListeners();
         ChipDnaMobile.getInstance().addAvailablePinPadsListener(new IAvailablePinPadsListener() {
             @Override
@@ -195,6 +195,11 @@ public class ConnectPinPad extends AbstractToggleable {
                 });
             }
         });
+
+        Parameters parameters = new Parameters();
+        parameters.add(ParameterKeys.SearchConnectionTypeBluetooth, ParameterValues.TRUE);
+        parameters.add(ParameterKeys.SearchConnectionTypeBluetoothLe, ParameterValues.TRUE);
+        parameters.add(ParameterKeys.SearchConnectionTypeUsb, ParameterValues.TRUE);
         ChipDnaMobile.getInstance().getAvailablePinPads(parameters);
     }
 
@@ -218,7 +223,6 @@ public class ConnectPinPad extends AbstractToggleable {
         // Once all changes have been made a call to .setProperties() is required in order for the changes to take effect.
         // Parameters are passed within this method and added to the ChipDna Mobile status object.
         ChipDnaMobile.getInstance().setProperties(requestParameters);
-
     }
 
     protected void requestBluetoothPermissions()
@@ -256,5 +260,10 @@ public class ConnectPinPad extends AbstractToggleable {
     @Override
     public void onRefresh(SwipeRefreshLayout swipeRefreshLayout) {
         this.refresh();
+    }
+
+    @Override
+    public void onRefreshStateChange(boolean isRefreshing) {
+        this.continueWithoutPinPad.setVisibility(isRefreshing ? View.GONE : View.VISIBLE);
     }
 }

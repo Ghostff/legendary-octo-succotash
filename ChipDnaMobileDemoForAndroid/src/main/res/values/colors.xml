@@ -7,6 +7,7 @@
     <color name="card_background">#ffffff</color>
     <color name="mute_card_background">#1a1a1a</color>
     <color name="card_default">#1c2121</color>
+    <color name="disabled_card_default">#252b2b</color>
     <color name="black">#000000</color>
     <color name="mute">#a2a2a2</color>
     <color name="light_mute">#f3f3f3</color>

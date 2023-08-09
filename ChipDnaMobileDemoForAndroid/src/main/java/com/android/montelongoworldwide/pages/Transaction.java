@@ -10,9 +10,11 @@ public class Transaction {
     public final int amount;
 
     public String id;
+    public String firstName;
+    public String lastName;
     public String type;
     public String last4;
-    public String receipt;
+    public String receipt = null;
     public final String packageId;
     public final String refId;
     public final int marketId;

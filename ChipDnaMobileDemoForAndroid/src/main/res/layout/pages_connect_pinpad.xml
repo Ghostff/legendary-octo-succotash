@@ -3,10 +3,10 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:id="@+id/pinPadLayout"
         app:layout_constraintTop_toBottomOf="@+id/searchEditText"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,7 +19,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/titleContainer">
         <TextView
-                android:text="Pinpads"
+                android:text="Select Card Reader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/listTitle"
@@ -55,7 +55,20 @@
             <!--                <include layout="@layout/components_connect_pinpad"/>-->
             <!--                <include layout="@layout/components_connect_pinpad"/>-->
         </LinearLayout>
+
     </ScrollView>
+    <Button
+            android:text="Continue a without card reader"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:id="@+id/continueWithoutPinPad"
+            android:background="@drawable/primary_button"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

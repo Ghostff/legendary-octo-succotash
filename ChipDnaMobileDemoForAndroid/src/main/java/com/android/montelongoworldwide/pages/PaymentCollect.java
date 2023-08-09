@@ -2,19 +2,28 @@ package com.android.montelongoworldwide.pages;
 
 import android.app.AlertDialog;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.android.R;
 import com.android.montelongoworldwide.PackageSelectionActivity;
+import com.android.montelongoworldwide.Request;
 import com.android.montelongoworldwide.Utils;
 import com.bumptech.glide.Glide;
 import com.creditcall.chipdnamobile.*;
 import com.google.android.material.tabs.TabLayout;
+
+import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class PaymentCollect extends AbstractToggleable {
     protected final TextView paymentAmountView;
@@ -23,8 +32,13 @@ public class PaymentCollect extends AbstractToggleable {
     protected final TabLayout paymentTabNavLayout;
     protected final Button submitPaymentButton;
     private final PackageSelectionActivity context;
+    private final EditText cardNumber;
+    private final EditText cardExpiry;
+    private final EditText cardCVV;
+    private final EditText cardName;
     private Transaction transaction;
     private AlertDialog alertDialog;
+    private boolean allowPinPad;
 
     public PaymentCollect(PackageSelectionActivity mainActivity) {
         ViewGroup parentLayout = mainActivity.findViewById(R.id.mainPageContainer);
@@ -80,29 +94,131 @@ public class PaymentCollect extends AbstractToggleable {
         });
 
 
+        this.cardName = this.layout.findViewById(R.id.cardName);
+        this.cardNumber = this.layout.findViewById(R.id.cardNumber);
+        this.cardExpiry = this.layout.findViewById(R.id.cardExpiry);
+        this.cardCVV = this.layout.findViewById(R.id.cardCVV);
+
+        this.cardNumber.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            private static final String CREDIT_CARD_REGEX = "([0-9]{1,4})";
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String formattedText = editable.toString().replaceAll(" ", "").replaceAll(CREDIT_CARD_REGEX, "$1 ").trim();
+                cardNumber.removeTextChangedListener(this);
+                cardNumber.setText(formattedText);
+                cardNumber.setSelection(formattedText.length());
+                cardNumber.addTextChangedListener(this);
+            }
+        });
+
+        this.cardExpiry.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String rawText = editable.toString().replaceAll("/", "");
+
+                if (rawText.length() > 2) {
+                    String formattedText = rawText.substring(0, 2) + "/" + rawText.substring(2);
+                    cardExpiry.removeTextChangedListener(this);
+                    cardExpiry.setText(formattedText);
+                    cardExpiry.setSelection(formattedText.length());
+                    cardExpiry.addTextChangedListener(this);
+                }
+            }
+        });
+
         // we should process api payment here (this is just for demo)
-        this.submitPaymentButton.setOnClickListener(v -> mainActivity.setPaymentCompleted(transaction));
+        this.submitPaymentButton.setOnClickListener(this::startManualTransaction);
         this.setVisibility(false);
     }
 
     public void startTransaction(Transaction transaction)
     {
-        this.transaction = transaction;
-        this.paymentAmountView.setText(Utils.formatAmount(transaction.amount));
+        this.paymentAmountView.setText(Utils.formatAmount((this.transaction = transaction).amount));
+        if (this.allowPinPad) {
+            this.startPinPadTransaction();
+        } else {
+            Objects.requireNonNull(this.paymentTabNavLayout.getTabAt(1)).select();
+            this.paymentTabNavLayout.removeTabAt(0);
+        }
+    }
 
+    protected void startManualTransaction(View view)
+    {
+        Button btn = (Button) view;
+        btn.setEnabled(false);
+
+        String[] names = this.cardName.getText().toString().split(" ");
+        String cardNumber = this.cardNumber.getText().toString().replaceAll(" ", "");
+        String cardExpiry = this.cardExpiry.getText().toString();
+        String cardCVV = this.cardCVV.getText().toString();
+
+        StringBuilder lastName = new StringBuilder();
+        for (int i = 1; i < names.length; i++) {
+            lastName.append(" ").append(names[i]);
+        }
+
+        new Request<HashMap<String, String>>("https://secure.nmi.com/api/transact.php") {
+            @Override
+            public void onSuccess(HashMap<String, String> result) {
+                btn.setEnabled(true);
+                if (!result.get("response").equalsIgnoreCase("1")) {
+                    alertDialog = Utils.alert(context, "Error", result.get("responsetext"));
+                    return;
+                }
+
+                transaction.id = result.get("transactionid");
+                transaction.firstName = names[0];
+                transaction.lastName = lastName.toString();
+                transaction.type = "credit";
+                transaction.last4 = cardNumber.substring(cardNumber.length() - 4);
+                context.setPaymentCompleted(transaction);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                btn.setEnabled(true);
+                alertDialog = Utils.alert(context, "Error", errorMessage);
+            }
+
+            @Override
+            public HashMap<String, String> onResponse(String response) throws UnsupportedEncodingException {
+                return (HashMap<String, String>) Request.decodeQueryString(response);
+            }
+        }.post(new HashMap<String, String>() {{
+            put("amount", (new DecimalFormat("#.00")).format(transaction.amount / 100));
+            put("type", "sale");
+            put("firstname", names[0]);
+            put("lastname", lastName.toString());
+            put("ccnumber", cardNumber);
+            put("ccexp", cardExpiry);
+            put("cvv", cardCVV);
+            put("orderid", transaction.refId);
+            put("security_key", ConnectPinPad.APIKEY);
+        }});
+    }
+
+    protected void startPinPadTransaction()
+    {
         // Request Parameters are used as to communicate - with ChipDna Mobile - the parameters needed to complete a given command.
         // They are sent with the method call to ChipDna Mobile.
         Parameters requestParameters = new Parameters();
 
         // The following parameters are essential for the completion of a transaction.
         // In the current example the parameters are initialised as constants. They will need to be dynamically collected and initialised.
-        requestParameters.add(ParameterKeys.Amount, String.valueOf(transaction.amount));
+        requestParameters.add(ParameterKeys.Amount, String.valueOf(this.transaction.amount));
         requestParameters.add(ParameterKeys.AmountType, ParameterValues.AmountTypeActual);
         requestParameters.add(ParameterKeys.Currency, "USD");
 
         // The user reference is needed to be to able to access the transaction on WEBMis.
         // The reference should be unique to a transaction, so it is suggested that the reference is generated, similar to the example below.
-        requestParameters.add(ParameterKeys.UserReference, transaction.refId);
+        requestParameters.add(ParameterKeys.UserReference, this.transaction.refId);
 
         requestParameters.add(ParameterKeys.TransactionType, ParameterValues.Sale);
         requestParameters.add(ParameterKeys.PaymentMethod, ParameterValues.Card);
@@ -136,7 +252,9 @@ public class PaymentCollect extends AbstractToggleable {
         public void onTransactionFinishedListener(Parameters parameters) {
             log("onTransactionFinishedListener =>", parameters);
 
-            String errorMsg = parameters.getValue(ParameterKeys.ErrorDescription);
+            // [] to allow mutability in closure
+            final String[] errorMsg = {parameters.getValue(ParameterKeys.ErrorDescription)};
+            String error = parameters.getValue(ParameterKeys.Errors);
             String receipt = parameters.getValue(ParameterKeys.PreformattedCustomerReceipt);
             String type = parameters.getValue(ParameterKeys.PaymentMethod);
             String transactionId = parameters.getValue(ParameterKeys.TransactionId);
@@ -144,10 +262,24 @@ public class PaymentCollect extends AbstractToggleable {
 
             context.runOnUiThread(() -> {
                 context.toggleRefreshing(false);
-                if (errorMsg != null) {
-                    context.runOnUiThread(() -> Utils.alert(alertDialog, "Error", errorMsg));
+                if (errorMsg[0] != null || error != null) {
+                    // Restart transaction after ok is clicked.
+                    alertDialog.dismiss();
+
+                    String okBtnMessage = "Ok";
+                    Utils.AlertAction cancel;
+                    // maybe "TimeOutError"
+                    if (errorMsg[0] == null) {
+                        okBtnMessage = "Retry";
+                        errorMsg[0] = error;
+                        cancel = new Utils.AlertAction("Go Back", (dialog, which) -> context.moveBackward());
+                    } else {
+                        cancel = null;
+                    }
+
+                    Utils.AlertAction ok = new Utils.AlertAction(okBtnMessage, (dialog, which) -> startTransaction(transaction));
                     ChipDnaMobile.getInstance().terminateTransaction(null);
-                    startTransaction(transaction);
+                    context.runOnUiThread(() -> Utils.alert(context, "Error", errorMsg[0], ok, cancel));
                     return;
                 }
 
@@ -234,8 +366,12 @@ public class PaymentCollect extends AbstractToggleable {
         });
     }
 
-    public void RegisterCollectEvents()
+    public void RegisterCollectEvents(boolean isUsingPinPad)
     {
+        if (!(this.allowPinPad = isUsingPinPad)) {
+            return;
+        }
+
         TransactionListener transactionListener = new TransactionListener();
         ChipDnaMobile.getInstance().addTransactionFinishedListener(transactionListener);
         ChipDnaMobile.getInstance().addApplicationSelectionListener(transactionListener);
@@ -258,12 +394,11 @@ public class PaymentCollect extends AbstractToggleable {
     }
 
     private void log(String title, Parameters parameters) {
-        StringBuilder formattedLogBuilder = new StringBuilder();
-        formattedLogBuilder.append(title);
+        StringBuilder formattedLogBuilder = new StringBuilder(title);
 
         if(parameters != null) {
             for (Parameter parameter : parameters.toList()) {
-                formattedLogBuilder.append(String.format("\t[%s]\n", parameter));
+                formattedLogBuilder.append(String.format("\t[%s]\n", String.valueOf(parameter)));
             }
         }
 

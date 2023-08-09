@@ -26,6 +26,7 @@ import com.creditcall.chipdnamobile.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 
@@ -58,11 +59,12 @@ public class PackageSelectionActivity extends AppCompatActivity implements Activ
     protected Hashtable<Integer, AbstractToggleable> pages = new Hashtable<>();
     private SwipeRefreshLayout swipeRefreshLayout;
     protected int pageIndex = 0;
+    private AbstractToggleable activePage;
 
     public PackageSelectionActivity()
     {
         PackageSelectionActivity context = this;
-        new JsonRequest<JSONArray>(Utils.url("mobile-app/markets"), PackageSelectionActivity.CRM_BEARER_TOKEN) {
+        new Request<JSONArray>(Utils.url("mobile-app/markets"), PackageSelectionActivity.CRM_BEARER_TOKEN) {
             @Override
             public void onSuccess(JSONArray markets) {
                 market.setModels(markets);
@@ -72,9 +74,9 @@ public class PackageSelectionActivity extends AppCompatActivity implements Activ
             public void onError(String e) {
                 Utils.alert(context, "Error", "Could not load markets.\n" + e, null, null);
             }
-        }.dispatch();
+        }.get();
 
-        new JsonRequest<JSONArray>(Utils.url("mobile-app/packages?include_fe=false"), PackageSelectionActivity.CRM_BEARER_TOKEN) {
+        new Request<JSONArray>(Utils.url("mobile-app/packages?include_fe=false"), PackageSelectionActivity.CRM_BEARER_TOKEN) {
             @Override
             public void onSuccess(JSONArray markets) {
                 pkg.setModels(markets);
@@ -89,7 +91,7 @@ public class PackageSelectionActivity extends AppCompatActivity implements Activ
                     throw new RuntimeException(ex);
                 }
             }
-        }.dispatch();
+        }.get();
     }
 
     @Override
@@ -139,11 +141,14 @@ public class PackageSelectionActivity extends AppCompatActivity implements Activ
             @Override
             public void afterTextChanged(Editable s) {}
         });
+
+        this.render(0); // initial render.
     }
 
     public void toggleRefreshing(boolean isVisible)
     {
         this.swipeRefreshLayout.setRefreshing(isVisible);
+        if (this.activePage != null) this.activePage.onRefreshStateChange(isVisible);
     }
 
     protected void renderFooter()
@@ -168,37 +173,45 @@ public class PackageSelectionActivity extends AppCompatActivity implements Activ
             this.searchEditText.setVisibility(View.VISIBLE);
         }
 
-        for (AbstractToggleable page : this.pages.values()) {
-            page.setVisibility(false);
-            this.toggleRefreshing(false);
+        for (Map.Entry<Integer, AbstractToggleable> entry : this.pages.entrySet()) {
+            AbstractToggleable page = entry.getValue();
+            if (entry.getKey() == pageIndex) {
+                this.activePage = page;
+            } else {
+                page.setVisibility(false);
+                this.toggleRefreshing(false);
+            }
         }
 
-        AbstractToggleable page = this.pages.get(pageIndex);
-        if (page != null) {
-            page.setVisibility(true);
-            this.swipeRefreshLayout.setOnRefreshListener(() -> page.onRefresh(swipeRefreshLayout));
-        }
+        this.activePage.setVisibility(true);
+        this.swipeRefreshLayout.setOnRefreshListener(() -> {
+            activePage.onRefresh(swipeRefreshLayout);
+            activePage.onRefreshStateChange(true);
+        });
 
         this.renderFooter();
     }
 
-    protected void moveForward()
+    public void moveForward()
     {
         this.render(Math.min(++this.pageIndex, this.pages.size()));
     }
 
-    protected void moveBackward()
+    public void moveBackward()
     {
         this.render(Math.max(0, --this.pageIndex));
     }
 
-    public void setPinPad(Parameters params) throws Exception
+    public void setPinPad(Parameters params)
     {
-        if (!params.containsKey(ParameterKeys.Result) || !params.getValue(ParameterKeys.Result).equalsIgnoreCase("True")) {
-            throw new Exception(params.getValue(ParameterKeys.Errors));
+        // When param is null, we are continuing without pinpad.
+        boolean usingPinPad = params != null;
+        if (usingPinPad && (!params.containsKey(ParameterKeys.Result) || !params.getValue(ParameterKeys.Result).equalsIgnoreCase("true"))) {
+            this.toggleRefreshing(false);
+            return;
         }
 
-        this.paymentCollect.RegisterCollectEvents();
+        this.paymentCollect.RegisterCollectEvents(usingPinPad);
         this.moveForward();
     }
 
@@ -305,8 +318,8 @@ public class PackageSelectionActivity extends AppCompatActivity implements Activ
                 this,
                 "Confirm Purchase Agreement Signing",
                 "You have not paid the full amount for this package. Are you sure you want to proceed with signing the purchase agreement?",
-                (dialog, whichButton) -> signPurchaseAgreement(),
-                (dialog, whichButton) -> {}
+                new Utils.AlertAction("Yes", (dialog, whichButton) -> signPurchaseAgreement()),
+                new Utils.AlertAction("Cancel", (dialog, whichButton) -> {})
             );
         } else {
             this.signPurchaseAgreement();

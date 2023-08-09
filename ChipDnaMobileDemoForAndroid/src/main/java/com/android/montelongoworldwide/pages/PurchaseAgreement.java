@@ -7,7 +7,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import com.android.R;
-import com.android.montelongoworldwide.JsonRequest;
+import com.android.montelongoworldwide.Request;
 import com.android.montelongoworldwide.PackageSelectionActivity;
 import com.android.montelongoworldwide.Utils;
 import org.json.JSONArray;
@@ -55,14 +55,14 @@ public class PurchaseAgreement extends AbstractToggleable {
     private void watchForPASignAndCloseBrowser(Transaction transaction)
     {
         String uri = "mobile-app/verify-purchase-agreement/" + transaction.eventDatetimeId + "/" + transaction.userId;
-        new JsonRequest<JSONObject>(Utils.url(uri), PackageSelectionActivity.CRM_BEARER_TOKEN) {
+        new Request<JSONObject>(Utils.url(uri), PackageSelectionActivity.CRM_BEARER_TOKEN) {
             @Override
             public void onSuccess(JSONObject result) {
                 try {
                     boolean status = result.getBoolean("status");
                     if (! status) {
                         Thread.sleep(500);
-                        dispatch(); // If status is false, continue pinging the URL until status becomes true
+                        get(); // If status is false, continue pinging the URL until status becomes true
                         return;
                     }
                     mainActivity.purchaseAgreementSigned();
@@ -76,6 +76,6 @@ public class PurchaseAgreement extends AbstractToggleable {
             public void onError(String errorMessage) {
                 Log.e("PA verification", errorMessage);
             }
-        }.dispatch();
+        }.get();
     }
 }

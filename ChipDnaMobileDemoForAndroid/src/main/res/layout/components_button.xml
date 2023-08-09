@@ -8,4 +8,4 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:background="@drawable/primary_button"
-        android:textColor="#FFFFFF"/>
+        android:textColor="@drawable/primary_button_text_color"/>

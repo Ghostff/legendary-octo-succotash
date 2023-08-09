@@ -13,4 +13,7 @@ public abstract class AbstractToggleable {
     public void onRefresh(SwipeRefreshLayout swipeRefreshLayout) {
         swipeRefreshLayout.setRefreshing(false);
     }
+
+    public void onRefreshStateChange(boolean isRefreshing) {
+    }
 }
